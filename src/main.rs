@@ -1,6 +1,6 @@
 use adw::prelude::AdwApplicationWindowExt;
 use gtk::prelude::{BoxExt, GtkWindowExt, OrientableExt};
-use relm4::{adw::{self, traits::{PreferencesRowExt, ActionRowExt}, prelude::{WidgetExt}}, gtk::{self, SelectionMode}, AppUpdate, Model, RelmApp, Sender, WidgetPlus, Widgets, factory::{FactoryVec, FactoryPrototype}, view};
+use relm4::{adw::{self, traits::{PreferencesRowExt, ActionRowExt}, prelude::{WidgetExt, ButtonExt}}, gtk::{self, SelectionMode}, AppUpdate, Model, RelmApp, Sender, WidgetPlus, Widgets, factory::{FactoryVec, FactoryPrototype}, view, RelmComponent, Components, send, ComponentUpdate};
 
 const START_ICON : &str = r#"media-playback-start-symbolic"#;
 const START_TOOLTIP : &str = r#"Start toolbox"#;
@@ -19,27 +19,89 @@ const TERMINAL_TOOLTIP : &str = r#"Open terminal inside of toolbox"#;
 
 const SETTINGS_ICON : &str = r#"applications-system-symbolic"#;
 const SETTINGS_TOOLTIP : &str = r#"Open toolbox settings"#;
+
 struct AppModel {
     toolboxes: FactoryVec<ToolboxContainer>
 }
 
-enum AppMsg {
-    Increment,
-    Decrement,
+#[derive(Debug)]
+enum AppMode {
 }
+enum AppMsg {
+    ShowToolboxSettingsRequest,
+}
+
+// Components (Book)
+
+#[relm4::widget]
+impl Widgets<ToolboxSettingsDialogModel, AppModel> for ToolboxSettingsDialogWidgets {
+    view! {
+        adw::PreferencesWindow {
+            set_transient_for: parent!{Some(&parent_widgets.main_window)},
+            set_modal: true,
+            set_visible: watch!(!model.hidden),
+            connect_close_request(sender) => move |_| {
+                send!(sender, ToolboxSettingsDialogMsg::Close);
+                gtk::Inhibit(true)
+            }
+        }
+    }
+}
+
+struct ToolboxSettingsDialogModel {
+    hidden: bool,
+}
+enum ToolboxSettingsDialogMsg {
+    Show,
+    Close,
+}
+
+impl Model for ToolboxSettingsDialogModel {
+    type Msg = ToolboxSettingsDialogMsg;
+    type Widgets = ToolboxSettingsDialogWidgets;
+    type Components = ();
+}
+impl ComponentUpdate<AppModel> for ToolboxSettingsDialogModel {
+    fn init_model(_parent_model: &AppModel) -> Self {
+        ToolboxSettingsDialogModel { hidden: true }
+    }
+
+    fn update(
+        &mut self,
+        msg: ToolboxSettingsDialogMsg,
+        _components: &(),
+        _sender: Sender<ToolboxSettingsDialogMsg>,
+        parent_sender: Sender<AppMsg>,
+    ) {
+        match msg {
+            ToolboxSettingsDialogMsg::Show => self.hidden = false,
+            ToolboxSettingsDialogMsg::Close => self.hidden = true,
+        }
+    }
+}
+
+
+#[derive(relm4::Components)]
+struct AppComponents {
+    dialog: RelmComponent<ToolboxSettingsDialogModel, AppModel>,
+}
+
+// \Components
+
+
+
 
 impl Model for AppModel {
     type Msg = AppMsg;
     type Widgets = AppWidgets;
-    type Components = ();
+    type Components = AppComponents;
 }
 
 impl AppUpdate for AppModel {
-    fn update(&mut self, msg: AppMsg, _components: &(), _sender: Sender<AppMsg>) -> bool {
+    fn update(&mut self, msg: AppMsg, components: &AppComponents, _sender: Sender<AppMsg>) -> bool {
         match msg {
-            AppMsg::Increment => {
-            }
-            AppMsg::Decrement => {
+            AppMsg::ShowToolboxSettingsRequest => {
+                components.dialog.send(ToolboxSettingsDialogMsg::Show).unwrap();
             }
         }
         true
@@ -133,6 +195,9 @@ impl FactoryPrototype for ToolboxContainer {
                     set_margin_bottom: 10,
                     set_tooltip_text: Some(SETTINGS_TOOLTIP),
                     set_css_classes: &["circular"],
+                    connect_clicked(sender) => move |btn| {
+                        send!(sender, AppMsg::ShowToolboxSettingsRequest);
+                    },
                 },
             }
         };
