@@ -37,6 +37,7 @@ enum AppMsg {
 impl Widgets<ToolboxSettingsDialogModel, AppModel> for ToolboxSettingsDialogWidgets {
     view! {
         adw::PreferencesWindow {
+            set_title: Some("Preferences: <Toolbox_name>"),
             set_transient_for: parent!{Some(&parent_widgets.main_window)},
             set_modal: true,
             set_visible: watch!(!model.hidden),
@@ -46,21 +47,51 @@ impl Widgets<ToolboxSettingsDialogModel, AppModel> for ToolboxSettingsDialogWidg
             },
             add = &adw::PreferencesPage {
                 add = &adw::PreferencesGroup {
-                    set_title: "Group",
+                    set_title: "Update",
                     add = &adw::PreferencesRow {
-                        set_title: "RowSearchable",
+                        set_title: "Updates",
                         set_child = Some(&adw::ActionRow) {
-                            set_title: "Test",
-                            set_subtitle: "additional information",
+                            set_title: "Update automatically",
                             add_suffix = &gtk::Box {
                                 append = &gtk::Switch {
                                     set_margin_all: 15,
-                                    set_tooltip_text: Some("Use global settings"),
+                                    set_tooltip_text: Some("Update applications automatically"),
                                 },
                             }
-                        },
-                        
-                    }
+                        },  
+                    },
+            },
+                add = &adw::PreferencesGroup {
+                    set_title: "Home Folder",
+                    add = &adw::PreferencesRow {
+                        set_title: "Seperate Home Folder",
+                        set_child = Some(&adw::ActionRow) {
+                            set_title: "Use separate home folder",
+                            add_suffix = &gtk::Box {
+                                append = &gtk::Switch {
+                                    set_margin_all: 15,
+                                    set_tooltip_text: Some("Use separate home folder"),
+                                },
+                            }
+                        },  
+                    },
+                    add = &adw::PreferencesRow {
+                        set_title: "Home Folder Path",
+                        set_child = Some(&adw::ActionRow) {
+                            set_title: "Home folder path",
+                            add_suffix = &gtk::Box {
+                                set_margin_all: 15,
+                                add_css_class: "linked",
+                                append = &gtk::Entry {
+                                    set_hexpand: true,
+                                },
+                                append = &gtk::Button {
+
+                                }
+                            }
+                        },  
+                    },
+                    
                 }
             }
         }
