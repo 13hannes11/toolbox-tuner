@@ -47,15 +47,18 @@ impl Widgets<ToolboxSettingsDialogModel, AppModel> for ToolboxSettingsDialogWidg
             },
             add = &adw::PreferencesPage {
                 add = &adw::PreferencesGroup {
-                    set_title: "Update",
+                    set_title: "Updates",
                     add = &adw::PreferencesRow {
-                        set_title: "Updates",
+                        set_title: "Update Policy",
                         set_child = Some(&adw::ActionRow) {
-                            set_title: "Update automatically",
+                            set_title: "Update Policy",
                             add_suffix = &gtk::Box {
-                                append = &gtk::Switch {
+                                append = &gtk::DropDown::from_strings(&[
+                                        "Update automatically", 
+                                        "Notify about updates",
+                                        "Do nothing"
+                                     ]) {
                                     set_margin_all: 15,
-                                    set_tooltip_text: Some("Update applications automatically"),
                                 },
                             }
                         },  
