@@ -1,6 +1,6 @@
 use adw::prelude::AdwApplicationWindowExt;
 use gtk::prelude::{BoxExt, GtkWindowExt, OrientableExt};
-use relm4::{adw::{self, traits::{PreferencesRowExt, ActionRowExt}, prelude::{WidgetExt, ButtonExt}}, gtk::{self, SelectionMode}, AppUpdate, Model, RelmApp, Sender, WidgetPlus, Widgets, factory::{FactoryVec, FactoryPrototype}, view, RelmComponent, Components, send, ComponentUpdate};
+use relm4::{adw::{self, traits::{PreferencesRowExt, ActionRowExt, AdwWindowExt, PreferencesPageExt, PreferencesWindowExt, PreferencesGroupExt}, prelude::{WidgetExt, ButtonExt, ListBoxRowExt}}, gtk::{self, SelectionMode}, AppUpdate, Model, RelmApp, Sender, WidgetPlus, Widgets, factory::{FactoryVec, FactoryPrototype}, view, RelmComponent, Components, send, ComponentUpdate};
 
 const START_ICON : &str = r#"media-playback-start-symbolic"#;
 const START_TOOLTIP : &str = r#"Start toolbox"#;
@@ -43,6 +43,25 @@ impl Widgets<ToolboxSettingsDialogModel, AppModel> for ToolboxSettingsDialogWidg
             connect_close_request(sender) => move |_| {
                 send!(sender, ToolboxSettingsDialogMsg::Close);
                 gtk::Inhibit(true)
+            },
+            add = &adw::PreferencesPage {
+                add = &adw::PreferencesGroup {
+                    set_title: "Group",
+                    add = &adw::PreferencesRow {
+                        set_title: "RowSearchable",
+                        set_child = Some(&adw::ActionRow) {
+                            set_title: "Test",
+                            set_subtitle: "additional information",
+                            add_suffix = &gtk::Box {
+                                append = &gtk::Switch {
+                                    set_margin_all: 15,
+                                    set_tooltip_text: Some("Use global settings"),
+                                },
+                            }
+                        },
+                        
+                    }
+                }
             }
         }
     }
