@@ -1,1 +1,3 @@
 /target
+/libs
+*.AppImage
