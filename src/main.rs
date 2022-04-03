@@ -20,6 +20,9 @@ const TERMINAL_TOOLTIP : &str = r#"Open terminal inside of toolbox"#;
 const SETTINGS_ICON : &str = r#"applications-system-symbolic"#;
 const SETTINGS_TOOLTIP : &str = r#"Open toolbox settings"#;
 
+const FOLDER_PICKER_ICON : &str = r#"folder-open-symbolic"#;
+const FOLDER_PICKER_TOOLTIP : &str = r#"Select folder dialogue"#;
+
 struct AppModel {
     toolboxes: FactoryVec<ToolboxContainer>
 }
@@ -88,8 +91,8 @@ impl Widgets<ToolboxSettingsDialogModel, AppModel> for ToolboxSettingsDialogWidg
                                 append = &gtk::Entry {
                                     set_hexpand: true,
                                 },
-                                append = &gtk::Button {
-
+                                append = &gtk::Button::from_icon_name(FOLDER_PICKER_ICON) {
+                                    set_tooltip_text: Some(FOLDER_PICKER_TOOLTIP),
                                 }
                             }
                         },  
