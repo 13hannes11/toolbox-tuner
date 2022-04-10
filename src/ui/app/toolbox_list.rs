@@ -43,6 +43,9 @@ impl FactoryPrototype for ToolboxContainer {
                     set_margin_bottom: 10,
                     set_tooltip_text: Some(APP_TOOLTIP),
                     set_css_classes: &["flat"],
+                    connect_clicked(sender) => move |btn| {
+                        send!(sender, AppMsg::ShowToolboxAppsRequest);
+                    },
                 },
                 append = &gtk::Button::from_icon_name(TERMINAL_ICON) {
                     set_margin_start: 10,

@@ -16,24 +16,26 @@ impl Widgets<AppModel, ()> for AppWidgets {
         main_window = adw::ApplicationWindow {
             set_default_width: 800,
             set_default_height: 600,
-
-            set_content: main_box = Some(&gtk::Box) {
+            set_content : main_box = Some(&gtk::Box) {
                 set_orientation: gtk::Orientation::Vertical,
-
                 append = &adw::HeaderBar {
                     set_title_widget = Some(&gtk::Label) {
                         set_label: "Toolbox Tuner",
                     }
                 },
 
-                append = &gtk::ListBox {
-                    set_selection_mode: SelectionMode::None,
-                    set_margin_all: 30,
-                    set_css_classes: &["boxed-list"],
-                    factory!(model.toolboxes)
+                append = &gtk::ScrolledWindow {
+                    set_hexpand: true,
+                    set_vexpand: true,
+                    set_child = Some(&gtk::ListBox) {
+                        set_selection_mode: SelectionMode::None,
+                        set_margin_all: 30,
+                        set_css_classes: &["boxed-list"],
+                        factory!(model.toolboxes)
+                    }
                 }
 
-            },
+            }
         }
     }
 }
