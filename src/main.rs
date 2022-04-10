@@ -22,6 +22,76 @@ fn main() {
         status: ToolboxStatus::Stopped,
         update_available: true,
     });
+    factory_vec.push(ToolboxContainer {
+        name: "Rust".to_string(),
+        status: ToolboxStatus::Stopped,
+        update_available: true,
+    });
+    factory_vec.push(ToolboxContainer {
+        name: "Rust".to_string(),
+        status: ToolboxStatus::Stopped,
+        update_available: true,
+    });
+    factory_vec.push(ToolboxContainer {
+        name: "Rust".to_string(),
+        status: ToolboxStatus::Stopped,
+        update_available: true,
+    });
+    factory_vec.push(ToolboxContainer {
+        name: "Rust".to_string(),
+        status: ToolboxStatus::Stopped,
+        update_available: true,
+    });
+    factory_vec.push(ToolboxContainer {
+        name: "Rust".to_string(),
+        status: ToolboxStatus::Stopped,
+        update_available: true,
+    });
+    factory_vec.push(ToolboxContainer {
+        name: "Rust".to_string(),
+        status: ToolboxStatus::Stopped,
+        update_available: true,
+    });
+    factory_vec.push(ToolboxContainer {
+        name: "Rust".to_string(),
+        status: ToolboxStatus::Stopped,
+        update_available: true,
+    });
+    factory_vec.push(ToolboxContainer {
+        name: "Rust".to_string(),
+        status: ToolboxStatus::Stopped,
+        update_available: true,
+    });
+    factory_vec.push(ToolboxContainer {
+        name: "Rust".to_string(),
+        status: ToolboxStatus::Stopped,
+        update_available: true,
+    });
+    factory_vec.push(ToolboxContainer {
+        name: "Rust".to_string(),
+        status: ToolboxStatus::Stopped,
+        update_available: true,
+    });
+    factory_vec.push(ToolboxContainer {
+        name: "Rust".to_string(),
+        status: ToolboxStatus::Stopped,
+        update_available: true,
+    });
+    factory_vec.push(ToolboxContainer {
+        name: "Rust".to_string(),
+        status: ToolboxStatus::Stopped,
+        update_available: true,
+    });
+    factory_vec.push(ToolboxContainer {
+        name: "Rust".to_string(),
+        status: ToolboxStatus::Stopped,
+        update_available: true,
+    });
+    factory_vec.push(ToolboxContainer {
+        name: "Rust".to_string(),
+        status: ToolboxStatus::Stopped,
+        update_available: true,
+    });
 
     let model = AppModel {
         toolboxes: factory_vec,

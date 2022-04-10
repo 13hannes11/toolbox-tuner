@@ -1,6 +1,6 @@
 use relm4::{factory::FactoryVec, Model};
 
-use crate::ui::components::toolbox_settings::model::AppComponents;
+use crate::ui::components::AppComponents;
 
 use super::{messages::AppMsg, widgets::AppWidgets};
 
