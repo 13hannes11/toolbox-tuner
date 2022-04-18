@@ -1,12 +1,33 @@
-use relm4::{ComponentUpdate, Sender};
+use relm4::{ComponentUpdate, Sender, factory::FactoryVec};
 
 use crate::ui::app::{messages::AppMsg, model::AppModel};
 
-use super::{messages::ToolboxAppDialogMsg, model::ToolboxAppDialogModel};
+use super::{messages::ToolboxAppDialogMsg, model::{ToolboxAppDialogModel, DotDesktopApplication}};
 
 impl ComponentUpdate<AppModel> for ToolboxAppDialogModel {
     fn init_model(_parent_model: &AppModel) -> Self {
-        ToolboxAppDialogModel { hidden: true }
+        let mut factory_vec = FactoryVec::new();
+        factory_vec.push(DotDesktopApplication {
+            name: "Firefox".to_string(),
+            selected: true,
+            icon_path: "".to_string(),
+        });
+        factory_vec.push(DotDesktopApplication {
+            name: "Firefox".to_string(),
+            selected: false,
+            icon_path: "".to_string(),
+        });
+        factory_vec.push(DotDesktopApplication {
+            name: "Firefox".to_string(),
+            selected: true,
+            icon_path: "".to_string(),
+        });
+        factory_vec.push(DotDesktopApplication {
+            name: "Firefox".to_string(),
+            selected: false,
+            icon_path: "".to_string(),
+        });
+        ToolboxAppDialogModel { hidden: true, apps: factory_vec      }
     }
 
     fn update(
