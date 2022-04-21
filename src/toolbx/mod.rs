@@ -1,12 +1,12 @@
 use std::{iter::zip, process::Command, sync::Arc, fmt::Result, string::ParseError};
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Default)]
 pub struct ToolbxContainer {
-    id: String,
-    name: String,
-    created: String,
-    status: String,
-    image: String,
+    pub id: String,
+    pub name: String,
+    pub created: String,
+    pub status: String,
+    pub image: String,
 }
 
 impl ToolbxContainer {

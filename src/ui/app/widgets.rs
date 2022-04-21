@@ -4,7 +4,7 @@ use relm4::{
         prelude::{BoxExt, GtkWindowExt, OrientableExt, WidgetExt},
         traits::AdwApplicationWindowExt,
     },
-    gtk::{self, SelectionMode},
+    gtk::{self, SelectionMode, Align, PolicyType},
     WidgetPlus, Widgets,
 };
 
@@ -27,14 +27,15 @@ impl Widgets<AppModel, ()> for AppWidgets {
                 append = &gtk::ScrolledWindow {
                     set_hexpand: true,
                     set_vexpand: true,
+                    set_hscrollbar_policy: PolicyType::Never,
                     set_child = Some(&gtk::ListBox) {
+                        set_valign: Align::Start,
                         set_selection_mode: SelectionMode::None,
                         set_margin_all: 30,
                         set_css_classes: &["boxed-list"],
                         factory!(model.toolboxes)
                     }
                 }
-
             }
         }
     }
