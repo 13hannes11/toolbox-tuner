@@ -1,8 +1,9 @@
 use relm4::{AppUpdate, Sender};
 
-use crate::ui::components::{toolbox_settings::{
-    messages::ToolboxSettingsDialogMsg,
-}, toolbox_apps::messages::ToolboxAppDialogMsg, AppComponents};
+use crate::ui::components::{
+    toolbox_apps::messages::ToolboxAppDialogMsg,
+    toolbox_settings::messages::ToolboxSettingsDialogMsg, AppComponents,
+};
 
 use super::{messages::AppMsg, model::AppModel};
 
@@ -14,11 +15,12 @@ impl AppUpdate for AppModel {
                     .toolbox_settings_dialog
                     .send(ToolboxSettingsDialogMsg::Show)
                     .unwrap();
-            },
+            }
             AppMsg::ShowToolboxAppsRequest => {
-                components.toolbox_apps_dialog
-                .send(ToolboxAppDialogMsg::Show)
-                .unwrap();
+                components
+                    .toolbox_apps_dialog
+                    .send(ToolboxAppDialogMsg::Show)
+                    .unwrap();
             }
         }
         true

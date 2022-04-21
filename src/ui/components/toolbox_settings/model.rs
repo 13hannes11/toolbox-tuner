@@ -1,8 +1,6 @@
-use relm4::{Model};
-
+use relm4::Model;
 
 use super::{messages::ToolboxSettingsDialogMsg, widgets::ToolboxSettingsDialogWidgets};
-
 
 pub struct ToolboxSettingsDialogModel {
     pub hidden: bool,

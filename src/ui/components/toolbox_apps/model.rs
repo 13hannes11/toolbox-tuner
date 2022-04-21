@@ -1,7 +1,6 @@
-use relm4::{Model, factory::{FactoryVec}};
+use relm4::{factory::FactoryVec, Model};
 
-
-use super::{messages::ToolboxAppDialogMsg, widgets::{ToolboxAppDialogWidgets}};
+use super::{messages::ToolboxAppDialogMsg, widgets::ToolboxAppDialogWidgets};
 
 #[derive(Default)]
 pub struct DotDesktopApplication {

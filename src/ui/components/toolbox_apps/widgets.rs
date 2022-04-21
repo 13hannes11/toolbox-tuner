@@ -13,8 +13,6 @@ use relm4::Widgets;
 
 use gtk::prelude::*;
 
-
-
 use crate::ui::app::model::AppModel;
 use crate::ui::components::toolbox_apps::messages::ToolboxAppDialogMsg;
 
@@ -24,8 +22,6 @@ use super::model::ToolboxAppDialogModel;
 pub struct AppFactoryWidgets {
     pub app_box: gtk::Box,
 }
-
-
 
 #[relm4::widget(pub)]
 impl Widgets<ToolboxAppDialogModel, AppModel> for ToolboxAppDialogWidgets {
@@ -59,7 +55,7 @@ impl Widgets<ToolboxAppDialogModel, AppModel> for ToolboxAppDialogWidgets {
                             factory!(model.apps),
                         }
                     }
-                    
+
                 }
             }
         }

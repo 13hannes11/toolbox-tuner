@@ -1,7 +1,5 @@
 use relm4::{factory::FactoryVec, RelmApp};
-use ui::app::{
-    model::{AppModel, ToolboxStatus, ToolboxContainer},
-};
+use ui::app::model::{AppModel, ToolboxContainer, ToolboxStatus};
 
 mod ui;
 

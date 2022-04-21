@@ -1,8 +1,11 @@
-use relm4::{ComponentUpdate, Sender, factory::FactoryVec};
+use relm4::{factory::FactoryVec, ComponentUpdate, Sender};
 
 use crate::ui::app::{messages::AppMsg, model::AppModel};
 
-use super::{messages::ToolboxAppDialogMsg, model::{ToolboxAppDialogModel, DotDesktopApplication}};
+use super::{
+    messages::ToolboxAppDialogMsg,
+    model::{DotDesktopApplication, ToolboxAppDialogModel},
+};
 
 impl ComponentUpdate<AppModel> for ToolboxAppDialogModel {
     fn init_model(_parent_model: &AppModel) -> Self {
@@ -27,7 +30,10 @@ impl ComponentUpdate<AppModel> for ToolboxAppDialogModel {
             selected: false,
             icon_path: "".to_string(),
         });
-        ToolboxAppDialogModel { hidden: true, apps: factory_vec      }
+        ToolboxAppDialogModel {
+            hidden: true,
+            apps: factory_vec,
+        }
     }
 
     fn update(
