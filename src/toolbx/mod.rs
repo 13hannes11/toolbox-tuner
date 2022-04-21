@@ -15,6 +15,13 @@ impl ToolbxContainer {
         println!("{}", output);
         parse_cmd_list_containers(output.as_str())
     }
+
+    pub fn stop(self) {
+        todo!{}
+    }
+    pub fn start(self) {
+        todo!{}
+    }
 }
 
 pub fn run_cmd_toolbx_list_containers() -> String {
