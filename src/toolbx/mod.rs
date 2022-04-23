@@ -1,11 +1,55 @@
-use std::{iter::zip, process::Command, sync::Arc, fmt::Result, string::ParseError};
+use std::{fmt::Display, iter::zip, process::Command, str::FromStr, string::ParseError, sync::Arc};
+
+#[derive(Debug)]
+pub enum ToolbxError {
+    ParseStatusError(String),
+}
+
+impl std::error::Error for ToolbxError {}
+
+impl Display for ToolbxError {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            ToolbxError::ParseStatusError(parse_int_error) => write!(f, "{}", parse_int_error),
+        }
+    }
+}
+
+#[derive(Debug, PartialEq)]
+pub enum ToolbxStatus {
+    Running,
+    Configured,
+    Exited,
+}
+
+impl Default for ToolbxStatus {
+    fn default() -> Self {
+        ToolbxStatus::Configured
+    }
+}
+
+impl FromStr for ToolbxStatus {
+    type Err = ToolbxError;
+
+    fn from_str(s: &str) -> Result<ToolbxStatus, ToolbxError> {
+        match s {
+            "running" => Ok(ToolbxStatus::Running),
+            "configured" => Ok(ToolbxStatus::Configured),
+            "exited" => Ok(ToolbxStatus::Exited),
+            s => Err(ToolbxError::ParseStatusError(format!(
+                "'{}' is not a valid toolbx status.",
+                s
+            ))),
+        }
+    }
+}
 
 #[derive(Debug, PartialEq, Default)]
 pub struct ToolbxContainer {
     pub id: String,
     pub name: String,
     pub created: String,
-    pub status: String,
+    pub status: ToolbxStatus,
     pub image: String,
 }
 
@@ -17,10 +61,10 @@ impl ToolbxContainer {
     }
 
     pub fn stop(self) {
-        todo!{}
+        todo! {}
     }
     pub fn start(self) {
-        todo!{}
+        todo! {}
     }
 }
 
@@ -96,18 +140,18 @@ fn test_tokenize_line_list_containers() {
     assert_eq!(target, result);
 }
 
-fn parse_line_list_containers(line: &str) -> ToolbxContainer {
+fn parse_line_list_containers(line: &str) -> Result<ToolbxContainer, ToolbxError> {
     let tokens = tokenize_line_list_containers(line);
     if tokens.len() != 5 {
         panic! {"Expected 5 tokens found {} in {:?}",  tokens.len(), tokens};
     }
-    ToolbxContainer {
+    Ok(ToolbxContainer {
         id: tokens[0].clone(),
         name: tokens[1].clone(),
         created: tokens[2].clone(),
-        status: tokens[3].clone(),
+        status: ToolbxStatus::from_str(&tokens[3])?,
         image: tokens[4].clone(),
-    }
+    })
 }
 
 #[test]
@@ -119,17 +163,17 @@ fn test_parse_line_list_containers() {
         id: "ae05203091ab".to_string(),
         name: "rust".to_string(),
         created: "4 months ago".to_string(),
-        status: "running".to_string(),
+        status: ToolbxStatus::Running,
         image: "registry.fedoraproject.org/fedora-toolbox:35".to_string(),
     };
     let result = parse_line_list_containers(toolbox_cmd_container_header);
-    assert_eq!(target, result);
+    assert_eq!(target, result.unwrap());
 }
 
 fn parse_cmd_list_containers(output: &str) -> Vec<ToolbxContainer> {
     let lines = output.trim().split("\n").skip(1);
     println!("{:?}", lines);
-    lines.map(parse_line_list_containers).collect()
+    lines.map(parse_line_list_containers).flatten().collect()
 }
 
 #[test]
@@ -147,21 +191,21 @@ fn test_parse_cmd_list_containers() {
             id: "cee1002b5f0b".to_string(),
             name: "fedora-toolbox-35".to_string(),
             created: "2 months ago".to_string(),
-            status: "exited".to_string(),
+            status: ToolbxStatus::Exited,
             image: "registry.fedoraproject.org/fedora-toolbox:35".to_string(),
         },
         ToolbxContainer {
             id: "9b611313bf65".to_string(),
             name: "latex".to_string(),
             created: "4 months ago".to_string(),
-            status: "configured".to_string(),
+            status: ToolbxStatus::Configured,
             image: "registry.fedoraproject.org/fedora-toolbox:35".to_string(),
         },
         ToolbxContainer {
             id: "ae05203091ab".to_string(),
             name: "rust".to_string(),
             created: "4 months ago".to_string(),
-            status: "running".to_string(),
+            status: ToolbxStatus::Running,
             image: "registry.fedoraproject.org/fedora-toolbox:35".to_string(),
         },
     ];

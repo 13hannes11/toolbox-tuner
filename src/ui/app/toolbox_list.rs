@@ -8,14 +8,15 @@ use relm4::{
     gtk, send, view, Sender,
 };
 
-use crate::{ui::{
-    ui_strings::{
+use crate::{
+    toolbx::{ToolbxContainer, ToolbxStatus},
+    ui::ui_strings::{
         APP_ICON, APP_TOOLTIP, SETTINGS_ICON, SETTINGS_TOOLTIP, SHUTDOWN_ICON, SHUTDOWN_TOOLTIP,
         START_ICON, START_TOOLTIP, TERMINAL_ICON, TERMINAL_TOOLTIP, UPDATE_ICON, UPDATE_TOOLTIP,
     },
-}, toolbx::ToolbxContainer};
+};
 
-use super::{messages::AppMsg};
+use super::messages::AppMsg;
 
 #[derive(Debug)]
 pub struct FactoryWidgets {
@@ -36,7 +37,7 @@ impl FactoryPrototype for ToolbxContainer {
     ) -> Self::Widgets {
         view! {
             suffix_box = &gtk::Box{
-                append = &gtk::AspectFrame{ 
+                append = &gtk::AspectFrame{
                     set_ratio: 1.0,
                     set_child = Some(&gtk::Button::from_icon_name(APP_ICON)) {
                         set_margin_start: 10,
@@ -49,7 +50,7 @@ impl FactoryPrototype for ToolbxContainer {
                         },
                     }
                 },
-                append = &gtk::AspectFrame{ 
+                append = &gtk::AspectFrame{
                     set_ratio: 1.0,
                     set_child = Some(&gtk::Button::from_icon_name(TERMINAL_ICON)) {
                         set_margin_start: 10,
@@ -59,7 +60,7 @@ impl FactoryPrototype for ToolbxContainer {
                         set_css_classes: &["flat"],
                     }
                 },
-                append = &gtk::AspectFrame{ 
+                append = &gtk::AspectFrame{
                     set_ratio: 1.0,
                     set_child = Some(&gtk::Button::from_icon_name(SETTINGS_ICON)) {
                         set_margin_start: 10,set_margin_start: 10,
@@ -75,10 +76,10 @@ impl FactoryPrototype for ToolbxContainer {
             }
         };
 
-        /* 
+        /*
         if self.update_available {
             view! {
-                update_button = &gtk::AspectFrame{ 
+                update_button = &gtk::AspectFrame{
                         set_ratio: 1.0,
                         set_child = Some(&gtk::Button::from_icon_name(UPDATE_ICON)) {
                         set_margin_top: 10,
@@ -96,8 +97,8 @@ impl FactoryPrototype for ToolbxContainer {
         let mut status_button_tooltip = START_TOOLTIP;
         let mut status_button_icon = START_ICON;
 
-        match self.status.as_str() {
-            "running" => {
+        match self.status {
+            ToolbxStatus::Running => {
                 status_button_tooltip = SHUTDOWN_TOOLTIP;
                 status_button_icon = SHUTDOWN_ICON;
             }
@@ -114,7 +115,7 @@ impl FactoryPrototype for ToolbxContainer {
                 set_title: &self.name,
                 set_subtitle: subtitle.as_str(),
                 add_prefix = &gtk::Box {
-                    append = &gtk::AspectFrame{ 
+                    append = &gtk::AspectFrame{
                         set_ratio: 1.0,
                         set_child = Some(&gtk::Button::from_icon_name(status_button_icon)) {
                             set_margin_top: 10,
@@ -126,7 +127,7 @@ impl FactoryPrototype for ToolbxContainer {
                 },
                 add_suffix: &suffix_box,
             }
-            
+
         };
         FactoryWidgets { action_row }
     }
