@@ -3,6 +3,8 @@ use std::{fmt::Display, iter::zip, process::Command, str::FromStr, string::Parse
 #[derive(Debug)]
 pub enum ToolbxError {
     ParseStatusError(String),
+    CommandExecutionError(String),
+    CommandUnsuccessfulError(String),
 }
 
 impl std::error::Error for ToolbxError {}
@@ -10,7 +12,9 @@ impl std::error::Error for ToolbxError {}
 impl Display for ToolbxError {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
-            ToolbxError::ParseStatusError(parse_int_error) => write!(f, "{}", parse_int_error),
+            ToolbxError::ParseStatusError(parse_error) => write!(f, "{}", parse_error),
+            ToolbxError::CommandExecutionError(command_exec_error) => write!(f, "{}", command_exec_error),
+            ToolbxError::CommandUnsuccessfulError(command_unsuc_error) => write!(f, "{}", command_unsuc_error),
         }
     }
 }
@@ -60,11 +64,61 @@ impl ToolbxContainer {
         parse_cmd_list_containers(output.as_str())
     }
 
-    pub fn stop(self) {
-        todo! {}
+    pub fn stop(mut self) -> Result<(), ToolbxError> {
+        let output = Command::new("podman")
+            .arg("stop")
+            .arg(self.name)
+            .output();
+
+        if output.is_err() {
+            return Err(ToolbxError::CommandExecutionError(output.unwrap_err().to_string()))
+        }
+        let output = output.unwrap();
+
+        // Success: Output { status: ExitStatus(unix_wait_status(0)), stdout: "tbx_name\n", stderr: "" }
+        //Fail: 
+            // Output { 
+            //     status: ExitStatus(unix_wait_status(32000)), 
+            //     stdout: "", 
+            //     stderr: "Error: no container with name or ID \"tbx_name\" found: no such container\n" 
+            // }
+
+        if output.status.code() == Some(0) {
+            self.status = ToolbxStatus::Exited;
+            Ok(())
+        } else {
+            Err(ToolbxError::CommandUnsuccessfulError(String::from_utf8_lossy(&output.stderr).into_owned()))
+        }
     }
-    pub fn start(self) {
-        todo! {}
+
+    pub fn start(mut self) ->  Result<(), ToolbxError> {
+        let output = Command::new("podman")
+        .arg("start")
+        .arg(self.name)
+        .output();
+
+        if output.is_err() {
+            return Err(ToolbxError::CommandExecutionError(output.unwrap_err().to_string()))
+        }
+        let output = output.unwrap();
+
+        // Success: status: Output { ExitStatus(unix_wait_status(0)), stdout: "tbx_name\n", stderr: "" }
+        // Fail: status: 
+            // Output { 
+            //     status: ExitStatus(unix_wait_status(32000)), 
+            //     stdout: "", 
+            //     stderr: "Error: no container with name or ID \"tbx_name\" found: no such container\n" 
+            // }
+
+        if output.status.code() == Some(0) {
+            self.status = ToolbxStatus::Running;
+            Ok(())
+        } else {
+            Err(ToolbxError::CommandUnsuccessfulError(String::from_utf8_lossy(&output.stderr).into_owned()))
+    }
+    }
+}
+
     }
 }
 
