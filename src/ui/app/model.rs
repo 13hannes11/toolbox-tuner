@@ -1,11 +1,14 @@
-use relm4::{factory::FactoryVec, Model};
+use relm4::{
+    factory::{FactoryVecDeque},
+    Model,
+};
 
-use crate::{ui::components::AppComponents, toolbx::ToolbxContainer};
+use crate::{toolbx::ToolbxContainer, ui::components::AppComponents};
 
 use super::{messages::AppMsg, widgets::AppWidgets};
 
 pub struct AppModel {
-    pub toolboxes: FactoryVec<ToolbxContainer>,
+    pub toolboxes: FactoryVecDeque<ToolbxContainer>,
 }
 
 impl Model for AppModel {

@@ -1,6 +1,6 @@
 use std::{fmt::Display, iter::zip, process::Command, str::FromStr, string::ParseError, sync::Arc};
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub enum ToolbxError {
     ParseStatusError(String),
     CommandExecutionError(String),
@@ -13,13 +13,17 @@ impl Display for ToolbxError {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
             ToolbxError::ParseStatusError(parse_error) => write!(f, "{}", parse_error),
-            ToolbxError::CommandExecutionError(command_exec_error) => write!(f, "{}", command_exec_error),
-            ToolbxError::CommandUnsuccessfulError(command_unsuc_error) => write!(f, "{}", command_unsuc_error),
+            ToolbxError::CommandExecutionError(command_exec_error) => {
+                write!(f, "{}", command_exec_error)
+            }
+            ToolbxError::CommandUnsuccessfulError(command_unsuc_error) => {
+                write!(f, "{}", command_unsuc_error)
+            }
         }
     }
 }
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Clone)]
 pub enum ToolbxStatus {
     Running,
     Configured,
@@ -48,7 +52,7 @@ impl FromStr for ToolbxStatus {
     }
 }
 
-#[derive(Debug, PartialEq, Default)]
+#[derive(Debug, PartialEq, Default, Clone)]
 pub struct ToolbxContainer {
     pub id: String,
     pub name: String,
@@ -64,62 +68,90 @@ impl ToolbxContainer {
         parse_cmd_list_containers(output.as_str())
     }
 
-    pub fn stop(mut self) -> Result<(), ToolbxError> {
+    pub fn stop(&mut self) -> Result<(), ToolbxError> {
         let output = Command::new("podman")
             .arg("stop")
-            .arg(self.name)
+            .arg(self.name.clone())
             .output();
 
         if output.is_err() {
-            return Err(ToolbxError::CommandExecutionError(output.unwrap_err().to_string()))
+            return Err(ToolbxError::CommandExecutionError(
+                output.unwrap_err().to_string(),
+            ));
         }
         let output = output.unwrap();
 
         // Success: Output { status: ExitStatus(unix_wait_status(0)), stdout: "tbx_name\n", stderr: "" }
-        //Fail: 
-            // Output { 
-            //     status: ExitStatus(unix_wait_status(32000)), 
-            //     stdout: "", 
-            //     stderr: "Error: no container with name or ID \"tbx_name\" found: no such container\n" 
-            // }
+        //Fail:
+        // Output {
+        //     status: ExitStatus(unix_wait_status(32000)),
+        //     stdout: "",
+        //     stderr: "Error: no container with name or ID \"tbx_name\" found: no such container\n"
+        // }
 
         if output.status.code() == Some(0) {
             self.status = ToolbxStatus::Exited;
             Ok(())
         } else {
-            Err(ToolbxError::CommandUnsuccessfulError(String::from_utf8_lossy(&output.stderr).into_owned()))
+            Err(ToolbxError::CommandUnsuccessfulError(
+                String::from_utf8_lossy(&output.stderr).into_owned(),
+            ))
         }
     }
 
-    pub fn start(mut self) ->  Result<(), ToolbxError> {
+    pub fn start(&mut self) -> Result<(), ToolbxError> {
         let output = Command::new("podman")
-        .arg("start")
-        .arg(self.name)
-        .output();
+            .arg("start")
+            .arg(self.name.clone())
+            .output();
 
         if output.is_err() {
-            return Err(ToolbxError::CommandExecutionError(output.unwrap_err().to_string()))
+            return Err(ToolbxError::CommandExecutionError(
+                output.unwrap_err().to_string(),
+            ));
         }
         let output = output.unwrap();
 
         // Success: status: Output { ExitStatus(unix_wait_status(0)), stdout: "tbx_name\n", stderr: "" }
-        // Fail: status: 
-            // Output { 
-            //     status: ExitStatus(unix_wait_status(32000)), 
-            //     stdout: "", 
-            //     stderr: "Error: no container with name or ID \"tbx_name\" found: no such container\n" 
-            // }
+        // Fail: status:
+        // Output {
+        //     status: ExitStatus(unix_wait_status(32000)),
+        //     stdout: "",
+        //     stderr: "Error: no container with name or ID \"tbx_name\" found: no such container\n"
+        // }
 
         if output.status.code() == Some(0) {
             self.status = ToolbxStatus::Running;
             Ok(())
         } else {
-            Err(ToolbxError::CommandUnsuccessfulError(String::from_utf8_lossy(&output.stderr).into_owned()))
-    }
+            Err(ToolbxError::CommandUnsuccessfulError(
+                String::from_utf8_lossy(&output.stderr).into_owned(),
+            ))
+        }
     }
 }
 
-    }
+#[test]
+fn test_start_1non_existing_containter() {
+    // TODO: create container that exists based on simple image
+    //       run command
+    //       delete container
+    //let tbx = ToolbxContainer{created: "".to_string(), id: "".to_string(), name: "latex".to_string(), image: "".to_string(), status: ToolbxStatus::Exited};
+
+    //tbx.stop();
+}
+
+#[test]
+fn test_start_non_existing_containter() {
+    let mut tbx = ToolbxContainer {
+        created: "".to_string(),
+        id: "".to_string(),
+        name: "zy2lM6BdZoTnKHaVPkUJ".to_string(),
+        image: "".to_string(),
+        status: ToolbxStatus::Exited,
+    };
+
+    assert_eq!(Ok(()), tbx.start());
 }
 
 pub fn run_cmd_toolbx_list_containers() -> String {
@@ -180,8 +212,8 @@ fn tokenize_line_list_containers(line: &str) -> Vec<String> {
 
 #[test]
 fn test_tokenize_line_list_containers() {
-    let toolbox_cmd_container_header = 
-        "ae05203091ab  rust               4 months ago  running     registry.fedoraproject.org/fedora-toolbox:35";
+    let toolbox_cmd_container_header = "ae05203091ab  rust               4 months ago  \
+        running     registry.fedoraproject.org/fedora-toolbox:35";
 
     let target = vec![
         "ae05203091ab",
@@ -210,8 +242,8 @@ fn parse_line_list_containers(line: &str) -> Result<ToolbxContainer, ToolbxError
 
 #[test]
 fn test_parse_line_list_containers() {
-    let toolbox_cmd_container_header = 
-        "ae05203091ab  rust               4 months ago  running     registry.fedoraproject.org/fedora-toolbox:35";
+    let toolbox_cmd_container_header = "ae05203091ab  rust               4 months ago  \
+        running     registry.fedoraproject.org/fedora-toolbox:35";
 
     let target = ToolbxContainer {
         id: "ae05203091ab".to_string(),

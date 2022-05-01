@@ -1,8 +1,11 @@
 use relm4::{AppUpdate, Sender};
 
-use crate::ui::components::{
-    toolbox_apps::messages::ToolboxAppDialogMsg,
-    toolbox_settings::messages::ToolboxSettingsDialogMsg, AppComponents,
+use crate::{
+    toolbx::ToolbxStatus,
+    ui::components::{
+        toolbox_apps::messages::ToolboxAppDialogMsg,
+        toolbox_settings::messages::ToolboxSettingsDialogMsg, AppComponents,
+    },
 };
 
 use super::{messages::AppMsg, model::AppModel};
@@ -21,6 +24,19 @@ impl AppUpdate for AppModel {
                     .toolbox_apps_dialog
                     .send(ToolboxAppDialogMsg::Show)
                     .unwrap();
+            }
+            AppMsg::ToolbxContainerToggleStartStop(index) => {
+                if let Some(toolbx_container) = self.toolboxes.get_mut(index.current_index()) {
+                    match toolbx_container.status {
+                        ToolbxStatus::Exited | ToolbxStatus::Configured => {
+                            toolbx_container.start();
+                        }
+                        ToolbxStatus::Running => {
+                            toolbx_container.stop();
+                        }
+                    }
+                    // TODO: tell button to reactivate somehow
+                }
             }
         }
         true

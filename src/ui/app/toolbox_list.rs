@@ -4,7 +4,7 @@ use relm4::{
         prelude::{BoxExt, ButtonExt, WidgetExt},
         traits::{ActionRowExt, PreferencesRowExt},
     },
-    factory::{FactoryPrototype, FactoryVec},
+    factory::{DynamicIndex, FactoryPrototype, FactoryVecDeque},
     gtk, send, view, Sender,
 };
 
@@ -24,17 +24,14 @@ pub struct FactoryWidgets {
 }
 
 impl FactoryPrototype for ToolbxContainer {
-    type Factory = FactoryVec<Self>;
+    type Factory = FactoryVecDeque<Self>;
     type Widgets = FactoryWidgets;
     type Root = adw::ActionRow;
     type View = gtk::ListBox;
     type Msg = AppMsg;
 
-    fn init_view(
-        &self,
-        key: &<Self::Factory as relm4::factory::Factory<Self, Self::View>>::Key,
-        sender: Sender<Self::Msg>,
-    ) -> Self::Widgets {
+    fn init_view(&self, key: &DynamicIndex, sender: Sender<Self::Msg>) -> Self::Widgets {
+
         view! {
             suffix_box = &gtk::Box{
                 append = &gtk::AspectFrame{
@@ -110,6 +107,8 @@ impl FactoryPrototype for ToolbxContainer {
 
         let subtitle = format!("created {}\n{}", self.created, self.image);
 
+        let index = key.clone();
+
         view! {
             action_row = &adw::ActionRow {
                 set_title: &self.name,
@@ -122,6 +121,11 @@ impl FactoryPrototype for ToolbxContainer {
                             set_margin_bottom: 10,
                             set_tooltip_text: Some(status_button_tooltip),
                             set_css_classes: &["circular"],
+                            connect_clicked(sender) => move |btn| {
+                                // Disable button
+                                btn.set_sensitive(false);
+                                send!(sender, AppMsg::ToolbxContainerToggleStartStop(index.clone()));
+                            },
                         },
                     },
                 },
@@ -138,6 +142,7 @@ impl FactoryPrototype for ToolbxContainer {
         widgets: &Self::Widgets,
     ) {
         //widgets.action_row.set_label(&self.name.to_string());
+        println!("updated {}", key.current_index());
     }
 
     fn root_widget(widgets: &Self::Widgets) -> &Self::Root {
