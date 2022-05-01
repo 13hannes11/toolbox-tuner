@@ -21,6 +21,7 @@ use super::messages::AppMsg;
 #[derive(Debug)]
 pub struct FactoryWidgets {
     pub action_row: adw::ActionRow,
+    status_button: gtk::Button,
 }
 
 impl FactoryPrototype for ToolbxContainer {
@@ -110,30 +111,34 @@ impl FactoryPrototype for ToolbxContainer {
         let index = key.clone();
 
         view! {
+            status_button = &gtk::Button::from_icon_name(status_button_icon) {
+                set_margin_top: 10,
+                set_margin_bottom: 10,
+                set_tooltip_text: Some(status_button_tooltip),
+                set_css_classes: &["circular"],
+                connect_clicked(sender) => move |btn| {
+                    // Disable button
+                    btn.set_sensitive(false);
+                    send!(sender, AppMsg::ToolbxContainerToggleStartStop(index.clone()));
+                },
+            }
+        };
+        
+        view! {
             action_row = &adw::ActionRow {
                 set_title: &self.name,
                 set_subtitle: subtitle.as_str(),
                 add_prefix = &gtk::Box {
                     append = &gtk::AspectFrame{
                         set_ratio: 1.0,
-                        set_child = Some(&gtk::Button::from_icon_name(status_button_icon)) {
-                            set_margin_top: 10,
-                            set_margin_bottom: 10,
-                            set_tooltip_text: Some(status_button_tooltip),
-                            set_css_classes: &["circular"],
-                            connect_clicked(sender) => move |btn| {
-                                // Disable button
-                                btn.set_sensitive(false);
-                                send!(sender, AppMsg::ToolbxContainerToggleStartStop(index.clone()));
-                            },
-                        },
-                    },
+                        set_child: Some(&status_button),
+                    }
                 },
                 add_suffix: &suffix_box,
             }
 
         };
-        FactoryWidgets { action_row }
+        FactoryWidgets { action_row, status_button }
     }
 
     fn view(
@@ -141,8 +146,23 @@ impl FactoryPrototype for ToolbxContainer {
         key: &<Self::Factory as relm4::factory::Factory<Self, Self::View>>::Key,
         widgets: &Self::Widgets,
     ) {
-        //widgets.action_row.set_label(&self.name.to_string());
         println!("updated {}", key.current_index());
+
+
+        // fixme: IDEALY this is would be done with message handling and only if the request actually is done
+        match self.status {
+            ToolbxStatus::Running => {
+                widgets.status_button.set_icon_name(SHUTDOWN_ICON);
+                widgets.status_button.set_tooltip_text(Some(SHUTDOWN_TOOLTIP));
+            }
+            _ => {
+                widgets.status_button.set_icon_name(START_ICON);
+                widgets.status_button.set_tooltip_text(Some(START_TOOLTIP));
+            }
+        }
+        widgets.status_button.set_sensitive(true);
+
+
     }
 
     fn root_widget(widgets: &Self::Widgets) -> &Self::Root {
