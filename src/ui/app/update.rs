@@ -27,12 +27,18 @@ impl AppUpdate for AppModel {
             }
             AppMsg::ToolbxContainerToggleStartStop(index) => {
                 if let Some(toolbx_container) = self.toolboxes.get_mut(index.current_index()) {
-                    match toolbx_container.status {
+                    
+                    match toolbx_container.toolbx_container.status {
                         ToolbxStatus::Exited | ToolbxStatus::Configured => {
-                            toolbx_container.start();
+                            toolbx_container.changing_status = true;
+                            // Send message to background worker to start
+                            //toolbx_container.toolbx_container.start();
+                            
                         }
                         ToolbxStatus::Running => {
-                            toolbx_container.stop();
+                            toolbx_container.changing_status = true;
+                            // send message to beackground worker to stop
+                            //toolbx_container.toolbx_container.stop();
                         }
                     }
                     // TODO: tell button to reactivate somehow

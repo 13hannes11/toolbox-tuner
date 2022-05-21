@@ -12,11 +12,12 @@ mod ui;
 
 fn main() {
     let toolbx_list = VecDeque::from(ToolbxContainer::get_toolboxes());
-    let factory_vec = FactoryVecDeque::from_vec_deque(toolbx_list);
-
-    let model = AppModel {
+    let factory_vec = FactoryVecDeque::new();
+    
+    let mut model = AppModel {
         toolboxes: factory_vec,
     };
+    model.update_toolbxes(toolbx_list.into_iter());
     let app = RelmApp::new(model);
     app.run();
 }

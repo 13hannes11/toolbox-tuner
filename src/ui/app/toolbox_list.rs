@@ -16,15 +16,16 @@ use crate::{
     },
 };
 
-use super::messages::AppMsg;
+use super::{messages::AppMsg, model::ToolbxEntry};
 
 #[derive(Debug)]
 pub struct FactoryWidgets {
     pub action_row: adw::ActionRow,
     status_button: gtk::Button,
+    status_spinner: gtk::Spinner,
 }
 
-impl FactoryPrototype for ToolbxContainer {
+impl FactoryPrototype for ToolbxEntry {
     type Factory = FactoryVecDeque<Self>;
     type Widgets = FactoryWidgets;
     type Root = adw::ActionRow;
@@ -95,7 +96,7 @@ impl FactoryPrototype for ToolbxContainer {
         let mut status_button_tooltip = START_TOOLTIP;
         let mut status_button_icon = START_ICON;
 
-        match self.status {
+        match self.toolbx_container.status {
             ToolbxStatus::Running => {
                 status_button_tooltip = SHUTDOWN_TOOLTIP;
                 status_button_icon = SHUTDOWN_ICON;
@@ -106,9 +107,20 @@ impl FactoryPrototype for ToolbxContainer {
             }
         }
 
-        let subtitle = format!("created {}\n{}", self.created, self.image);
+        let subtitle = format!("created {}\n{}", self.toolbx_container.created, self.toolbx_container.image);
 
         let index = key.clone();
+
+        view! {
+            status_spinner = &gtk::Spinner {
+                set_margin_top: 10,
+                set_margin_bottom: 10,
+                set_tooltip_text: Some(status_button_tooltip),
+                set_css_classes: &["circular"],
+                
+            }
+        };
+        //status_spinner.start();
 
         view! {
             status_button = &gtk::Button::from_icon_name(status_button_icon) {
@@ -123,10 +135,10 @@ impl FactoryPrototype for ToolbxContainer {
                 },
             }
         };
-        
+
         view! {
             action_row = &adw::ActionRow {
-                set_title: &self.name,
+                set_title: &self.toolbx_container.name,
                 set_subtitle: subtitle.as_str(),
                 add_prefix = &gtk::Box {
                     append = &gtk::AspectFrame{
@@ -138,7 +150,7 @@ impl FactoryPrototype for ToolbxContainer {
             }
 
         };
-        FactoryWidgets { action_row, status_button }
+        FactoryWidgets { action_row, status_button, status_spinner}
     }
 
     fn view(
@@ -150,17 +162,26 @@ impl FactoryPrototype for ToolbxContainer {
 
 
         // fixme: IDEALY this is would be done with message handling and only if the request actually is done
-        match self.status {
-            ToolbxStatus::Running => {
-                widgets.status_button.set_icon_name(SHUTDOWN_ICON);
-                widgets.status_button.set_tooltip_text(Some(SHUTDOWN_TOOLTIP));
+
+        if self.changing_status {
+            widgets.status_button.set_sensitive(false);
+            widgets.status_button.set_child(Some(&widgets.status_spinner));
+            widgets.status_spinner.start();
+
+        } else {
+            match self.toolbx_container.status {
+                ToolbxStatus::Running => {
+                    widgets.status_button.set_icon_name(SHUTDOWN_ICON);
+                    widgets.status_button.set_tooltip_text(Some(SHUTDOWN_TOOLTIP));
+                }
+                _ => {
+                    widgets.status_button.set_icon_name(START_ICON);
+                    widgets.status_button.set_tooltip_text(Some(START_TOOLTIP));
+                }
             }
-            _ => {
-                widgets.status_button.set_icon_name(START_ICON);
-                widgets.status_button.set_tooltip_text(Some(START_TOOLTIP));
-            }
+            widgets.status_button.set_sensitive(true);
+            widgets.status_spinner.stop();
         }
-        widgets.status_button.set_sensitive(true);
 
 
     }
