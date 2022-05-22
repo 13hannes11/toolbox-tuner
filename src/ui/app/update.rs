@@ -59,6 +59,19 @@ impl AppUpdate for AppModel {
                     toolbx_container.update_entry(container);
                 }
             }
+
+            AppMsg::OpenToolbxTerminal(index) => {
+                if let Some(toolbx_container) = self.toolboxes.get_mut(index.current_index()) {
+                    components
+                        .async_handler
+                        .sender()
+                        .blocking_send(AsyncHandlerMsg::OpenToolbxTerminal(
+                            index,
+                            toolbx_container.clone(),
+                        ))
+                        .expect("Receiver dropped");
+                }
+            }
         }
         true
     }

@@ -33,6 +33,8 @@ impl FactoryPrototype for ToolbxEntry {
     type Msg = AppMsg;
 
     fn init_view(&self, key: &DynamicIndex, sender: Sender<Self::Msg>) -> Self::Widgets {
+        let index = key.clone();
+
         view! {
             suffix_box = &gtk::Box{
                 append = &gtk::AspectFrame{
@@ -56,6 +58,9 @@ impl FactoryPrototype for ToolbxEntry {
                         set_margin_bottom: 10,
                         set_tooltip_text: Some(TERMINAL_TOOLTIP),
                         set_css_classes: &["flat"],
+                        connect_clicked(sender) => move |btn| {
+                            send!(sender, AppMsg::OpenToolbxTerminal(index.clone()));
+                        },
                     }
                 },
                 append = &gtk::AspectFrame{

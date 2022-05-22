@@ -6,5 +6,6 @@ pub enum AppMsg {
     ShowToolboxSettingsRequest,
     ShowToolboxAppsRequest,
     ToolbxContainerToggleStartStop(DynamicIndex),
+    OpenToolbxTerminal(DynamicIndex),
     ToolbxContainerChanged(DynamicIndex, ToolbxEntry),
 }

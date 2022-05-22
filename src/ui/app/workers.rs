@@ -1,3 +1,5 @@
+use std::process::Command;
+
 use relm4::factory::DynamicIndex;
 use relm4::{send, MessageHandler, Sender};
 use tokio::runtime::{Builder, Runtime};
@@ -18,6 +20,7 @@ pub struct AsyncHandler {
 pub enum AsyncHandlerMsg {
     StopToolbx(DynamicIndex, ToolbxEntry),
     StartToolbx(DynamicIndex, ToolbxEntry),
+    OpenToolbxTerminal(DynamicIndex, ToolbxEntry),
 }
 
 impl MessageHandler<AppModel> for AsyncHandler {
@@ -48,6 +51,19 @@ impl MessageHandler<AppModel> for AsyncHandler {
                             tbx.toolbx_container.start();
                             tbx.changing_status = false;
                             send! {parent_sender, AppMsg::ToolbxContainerChanged(index, tbx)};
+                        }
+                        AsyncHandlerMsg::OpenToolbxTerminal(index, mut tbx) => {
+                            // TODO: support many terminals and check which are installed
+                            let output = Command::new("gnome-terminal")
+                                .arg("--")
+                                .arg("toolbox")
+                                .arg("enter")
+                                .arg(tbx.toolbx_container.name.clone())
+                                .output();
+
+                            println!("{:?}", output);
+
+                            // TODO: update status
                         }
                     }
                 });
