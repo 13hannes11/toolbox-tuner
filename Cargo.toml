@@ -7,6 +7,7 @@ edition = "2021"
 
 [dependencies]
 relm4 = {version="0.4", features = ["libadwaita", "macros"]}
+tokio = { version = "1", features = ["full"] }
 
 [package.metadata.appimage]
 auto_link = true

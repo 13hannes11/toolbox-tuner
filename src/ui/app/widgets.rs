@@ -4,7 +4,7 @@ use relm4::{
         prelude::{BoxExt, GtkWindowExt, OrientableExt, WidgetExt},
         traits::AdwApplicationWindowExt,
     },
-    gtk::{self, SelectionMode, Align, PolicyType},
+    gtk::{self, Align, PolicyType, SelectionMode},
     WidgetPlus, Widgets,
 };
 

@@ -1,9 +1,6 @@
 use std::collections::VecDeque;
 
-use relm4::{
-    factory::{FactoryVecDeque},
-    RelmApp,
-};
+use relm4::{factory::FactoryVecDeque, RelmApp};
 use toolbx::ToolbxContainer;
 use ui::app::model::AppModel;
 
@@ -13,7 +10,7 @@ mod ui;
 fn main() {
     let toolbx_list = VecDeque::from(ToolbxContainer::get_toolboxes());
     let factory_vec = FactoryVecDeque::new();
-    
+
     let mut model = AppModel {
         toolboxes: factory_vec,
     };

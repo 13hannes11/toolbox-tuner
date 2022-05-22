@@ -9,7 +9,7 @@ use relm4::{
 };
 
 use crate::{
-    toolbx::{ToolbxContainer, ToolbxStatus},
+    toolbx::ToolbxStatus,
     ui::ui_strings::{
         APP_ICON, APP_TOOLTIP, SETTINGS_ICON, SETTINGS_TOOLTIP, SHUTDOWN_ICON, SHUTDOWN_TOOLTIP,
         START_ICON, START_TOOLTIP, TERMINAL_ICON, TERMINAL_TOOLTIP, UPDATE_ICON, UPDATE_TOOLTIP,
@@ -33,7 +33,6 @@ impl FactoryPrototype for ToolbxEntry {
     type Msg = AppMsg;
 
     fn init_view(&self, key: &DynamicIndex, sender: Sender<Self::Msg>) -> Self::Widgets {
-
         view! {
             suffix_box = &gtk::Box{
                 append = &gtk::AspectFrame{
@@ -107,7 +106,10 @@ impl FactoryPrototype for ToolbxEntry {
             }
         }
 
-        let subtitle = format!("created {}\n{}", self.toolbx_container.created, self.toolbx_container.image);
+        let subtitle = format!(
+            "created {}\n{}",
+            self.toolbx_container.created, self.toolbx_container.image
+        );
 
         let index = key.clone();
 
@@ -117,7 +119,7 @@ impl FactoryPrototype for ToolbxEntry {
                 set_margin_bottom: 10,
                 set_tooltip_text: Some(status_button_tooltip),
                 set_css_classes: &["circular"],
-                
+
             }
         };
         //status_spinner.start();
@@ -150,7 +152,11 @@ impl FactoryPrototype for ToolbxEntry {
             }
 
         };
-        FactoryWidgets { action_row, status_button, status_spinner}
+        FactoryWidgets {
+            action_row,
+            status_button,
+            status_spinner,
+        }
     }
 
     fn view(
@@ -160,19 +166,21 @@ impl FactoryPrototype for ToolbxEntry {
     ) {
         println!("updated {}", key.current_index());
 
-
         // fixme: IDEALY this is would be done with message handling and only if the request actually is done
 
         if self.changing_status {
             widgets.status_button.set_sensitive(false);
-            widgets.status_button.set_child(Some(&widgets.status_spinner));
+            widgets
+                .status_button
+                .set_child(Some(&widgets.status_spinner));
             widgets.status_spinner.start();
-
         } else {
             match self.toolbx_container.status {
                 ToolbxStatus::Running => {
                     widgets.status_button.set_icon_name(SHUTDOWN_ICON);
-                    widgets.status_button.set_tooltip_text(Some(SHUTDOWN_TOOLTIP));
+                    widgets
+                        .status_button
+                        .set_tooltip_text(Some(SHUTDOWN_TOOLTIP));
                 }
                 _ => {
                     widgets.status_button.set_icon_name(START_ICON);
@@ -182,8 +190,6 @@ impl FactoryPrototype for ToolbxEntry {
             widgets.status_button.set_sensitive(true);
             widgets.status_spinner.stop();
         }
-
-
     }
 
     fn root_widget(widgets: &Self::Widgets) -> &Self::Root {
