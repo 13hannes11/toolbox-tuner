@@ -1,3 +1,5 @@
+use std::process::Command;
+
 use relm4::{AppUpdate, Sender};
 
 use crate::{
@@ -62,14 +64,17 @@ impl AppUpdate for AppModel {
 
             AppMsg::OpenToolbxTerminal(index) => {
                 if let Some(toolbx_container) = self.toolboxes.get_mut(index.current_index()) {
-                    components
-                        .async_handler
-                        .sender()
-                        .blocking_send(AsyncHandlerMsg::OpenToolbxTerminal(
-                            index,
-                            toolbx_container.clone(),
-                        ))
-                        .expect("Receiver dropped");
+                    // TODO: support many terminals and check which are installed
+                    let output = Command::new("gnome-terminal")
+                        .arg("--")
+                        .arg("toolbox")
+                        .arg("enter")
+                        .arg(toolbx_container.toolbx_container.name.clone())
+                        .output();
+
+                    println!("{:?}", output);
+
+                    // TODO: update status
                 }
             }
         }
