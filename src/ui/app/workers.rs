@@ -1,7 +1,11 @@
+use std::time::Duration;
+
 use relm4::factory::DynamicIndex;
 use relm4::{send, MessageHandler, Sender};
 use tokio::runtime::{Builder, Runtime};
 use tokio::sync::mpsc::{channel, Sender as TokioSender};
+
+use crate::toolbx::ToolbxContainer;
 
 use super::{
     messages::AppMsg,
@@ -18,6 +22,7 @@ pub struct AsyncHandler {
 pub enum AsyncHandlerMsg {
     StopToolbx(DynamicIndex, ToolbxEntry),
     StartToolbx(DynamicIndex, ToolbxEntry),
+    UpdateToolbxes,
 }
 
 impl MessageHandler<AppModel> for AsyncHandler {
@@ -37,8 +42,11 @@ impl MessageHandler<AppModel> for AsyncHandler {
             while let Some(msg) = rx.recv().await {
                 let parent_sender = parent_sender.clone();
                 tokio::spawn(async move {
-                    tokio::time::sleep(std::time::Duration::from_secs(1)).await;
                     match msg {
+                        AsyncHandlerMsg::UpdateToolbxes => {
+                            let toolboxes = ToolbxContainer::get_toolboxes();
+                            send! {parent_sender, AppMsg::ToolbxListUpdate(toolboxes)};
+                        }
                         AsyncHandlerMsg::StopToolbx(index, mut tbx) => {
                             tbx.toolbx_container.stop();
                             tbx.changing_status = false;
@@ -51,6 +59,14 @@ impl MessageHandler<AppModel> for AsyncHandler {
                         }
                     }
                 });
+            }
+        });
+
+        let _sender = sender.clone();
+        rt.spawn(async move {
+            loop {
+                tokio::time::sleep(Duration::from_secs(10)).await;
+                _sender.send(AsyncHandlerMsg::UpdateToolbxes).await;
             }
         });
 

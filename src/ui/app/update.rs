@@ -61,6 +61,10 @@ impl AppUpdate for AppModel {
                     toolbx_container.update_entry(container);
                 }
             }
+            AppMsg::ToolbxListUpdate(tbx_vec) => {
+                println!("Updating Toolbox List");
+                self.update_toolbxes(tbx_vec.into_iter());
+            }
 
             AppMsg::OpenToolbxTerminal(index) => {
                 if let Some(toolbx_container) = self.toolboxes.get_mut(index.current_index()) {
