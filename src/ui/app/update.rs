@@ -78,7 +78,8 @@ impl AppUpdate for AppModel {
 
                     println!("{:?}", output);
 
-                    // TODO: update status
+                    // TODO: update status on worker and add refresh spinner in the meantime
+                    toolbx_container.toolbx_container.update_status();
                 }
             }
         }

@@ -1,8 +1,10 @@
 use std::{fmt::Display, iter::zip, process::Command, str::FromStr, string::ParseError, sync::Arc};
+use serde::{Serialize, Deserialize};
 
 #[derive(Debug, PartialEq)]
 pub enum ToolbxError {
     ParseStatusError(String),
+    JSONSerializationError(String),
     CommandExecutionError(String),
     CommandUnsuccessfulError(String),
 }
@@ -15,6 +17,9 @@ impl Display for ToolbxError {
             ToolbxError::ParseStatusError(parse_error) => write!(f, "{}", parse_error),
             ToolbxError::CommandExecutionError(command_exec_error) => {
                 write!(f, "{}", command_exec_error)
+            }
+            ToolbxError::JSONSerializationError(msg) => {
+                write!(f, "{}", msg)
             }
             ToolbxError::CommandUnsuccessfulError(command_unsuc_error) => {
                 write!(f, "{}", command_unsuc_error)
@@ -61,11 +66,71 @@ pub struct ToolbxContainer {
     pub image: String,
 }
 
+pub type PodmanInspectArray = Vec<PodmanInspectInfo>;
+
+#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct PodmanInspectInfo {
+    #[serde(rename = "Id")]
+    pub id: String,
+    #[serde(rename = "Created")]
+    pub created: String,
+    #[serde(rename = "State")]
+    pub state: PodManInspectState,
+    #[serde(rename = "Image")]
+    pub image: String,
+    #[serde(rename = "ImageName")]
+    pub image_name: String,
+    #[serde(rename = "Name")]
+    pub name: String,
+}
+
+#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct PodManInspectState {
+    #[serde(rename = "Status")]
+    pub status: String,
+}
+
 impl ToolbxContainer {
     pub fn get_toolboxes() -> Vec<ToolbxContainer> {
         let output = run_cmd_toolbx_list_containers();
         println!("{}", output);
         parse_cmd_list_containers(output.as_str())
+    }
+
+    fn parse_status(output : &str) -> Result<PodmanInspectInfo, ToolbxError> {
+        let result : Result<PodmanInspectArray, _> = serde_json::from_str(output);
+        match result {
+            Ok(inspect_vec) => {
+                match inspect_vec.first() {
+                    Some(info) => {
+                        Ok(info.clone())
+                    }
+                    None => {
+                        Err(ToolbxError::JSONSerializationError("Inspect command returned empty vecotr.".to_string()))
+                    }
+                }
+            }
+            Err(e) => {
+                Err(ToolbxError::JSONSerializationError(e.to_string()))
+            }
+        }
+        
+    }
+
+    pub fn update_status(&mut self) -> Result<(), ToolbxError>{
+        let output = Command::new("podman")
+        .arg("container")
+        .arg("inspect")
+        .arg(self.name.clone())
+        .output()
+        .expect("Failed to execute command");
+
+        let output = String::from_utf8_lossy(&output.stdout).to_string();
+        let inspect_result = ToolbxContainer::parse_status(output.as_str())?;
+        self.status = ToolbxStatus::from_str(inspect_result.state.status.as_str())?;
+        Ok(())
     }
 
     pub fn stop(&mut self) -> Result<(), ToolbxError> {
@@ -139,6 +204,24 @@ fn test_start_1non_existing_containter() {
     //let tbx = ToolbxContainer{created: "".to_string(), id: "".to_string(), name: "latex".to_string(), image: "".to_string(), status: ToolbxStatus::Exited};
 
     //tbx.stop();
+}
+
+#[test]
+fn test_inspect_parsing() {
+    let podman_inspect = concat!(
+        "[{",
+        "\"Id\": \"ae05203091ab4cdf047a9aeba6af8a7bed8105f7f59d09a35d2b64c837ecac0d\",",
+        "\"Created\": \"2021-12-10T20:51:43.140418098+01:00\",",
+        "\"State\": {",
+               "\"Status\": \"running\"",
+        "},",
+        "\"Image\": \"ab8bc106d4a710a7a27c538762864610467b3559f80b413d30e0a1bfcfe272a5\",",
+        "\"ImageName\": \"registry.fedoraproject.org/fedora-toolbox:35\",",
+        "\"Name\": \"rust\"",
+     "}]"
+    );
+    let inspect_info = ToolbxContainer::parse_status(podman_inspect).unwrap();
+    assert_eq!("running", inspect_info.state.status);
 }
 
 #[test]
