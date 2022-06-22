@@ -32,6 +32,7 @@ impl Display for ToolbxError {
 pub enum ToolbxStatus {
     Running,
     Configured,
+    Created,
     Exited,
 }
 
@@ -48,6 +49,7 @@ impl FromStr for ToolbxStatus {
         match s {
             "running" => Ok(ToolbxStatus::Running),
             "configured" => Ok(ToolbxStatus::Configured),
+            "created" => Ok(ToolbxStatus::Created),
             "exited" => Ok(ToolbxStatus::Exited),
             s => Err(ToolbxError::ParseStatusError(format!(
                 "'{}' is not a valid toolbx status.",
@@ -352,6 +354,7 @@ fn test_parse_cmd_list_containers() {
         "CONTAINER ID  CONTAINER NAME     CREATED       STATUS      IMAGE NAME\n",
         "cee1002b5f0b  fedora-toolbox-35  2 months ago  exited      registry.fedoraproject.org/fedora-toolbox:35\n",
         "9b611313bf65  latex              4 months ago  configured  registry.fedoraproject.org/fedora-toolbox:35\n",
+        "1235203091ab  website            4 months ago  created     registry.fedoraproject.org/fedora-toolbox:35\n",
         "ae05203091ab  rust               4 months ago  running     registry.fedoraproject.org/fedora-toolbox:35\n"
     );
 
@@ -368,6 +371,13 @@ fn test_parse_cmd_list_containers() {
             name: "latex".to_string(),
             created: "4 months ago".to_string(),
             status: ToolbxStatus::Configured,
+            image: "registry.fedoraproject.org/fedora-toolbox:35".to_string(),
+        },
+        ToolbxContainer {
+            id: "1235203091ab".to_string(),
+            name: "website".to_string(),
+            created: "4 months ago".to_string(),
+            status: ToolbxStatus::Created,
             image: "registry.fedoraproject.org/fedora-toolbox:35".to_string(),
         },
         ToolbxContainer {
