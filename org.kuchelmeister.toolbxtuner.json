@@ -12,7 +12,8 @@
         "--share=ipc",
         "--socket=fallback-x11",
         "--device=dri",
-        "--socket=wayland"
+        "--socket=wayland",
+        "--talk-name=org.freedesktop.Flatpak"
     ],
     "build-options" : {
         "append-path" : "/usr/lib/sdk/rust-stable/bin",
@@ -43,7 +44,7 @@
             "sources" : [
                 {
                     "type" : "git",
-                    "url" : "file:///var/home/hannes/Projects/toolbx-tuner"
+                    "url" : "https://github.com/13hannes11/toolbx-tuner"
                 }
             ]
         }
