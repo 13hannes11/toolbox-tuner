@@ -1,5 +1,5 @@
 [Desktop Entry]
-Name=toolbx-tuner
+Name=Toolbx Tuner
 Exec=toolbx-tuner
 Icon=org.kuchelmeister.toolbxtuner
 Terminal=false
