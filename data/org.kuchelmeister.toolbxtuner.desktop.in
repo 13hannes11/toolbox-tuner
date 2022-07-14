@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=toolbx-tuner
+Exec=toolbx-tuner
+Icon=org.kuchelmeister.toolbxtuner
+Terminal=false
+Type=Application
+Categories=GTK;
+StartupNotify=true
