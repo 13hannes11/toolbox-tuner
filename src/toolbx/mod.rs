@@ -147,7 +147,9 @@ impl ToolbxContainer {
     }
 
     pub fn stop(&mut self) -> Result<(), ToolbxError> {
-        let output = Command::new("podman")
+        let output = Command::new("flatpak-spawn")
+            .arg("--host") //Command::new("podman")
+            .arg("podman")
             .arg("stop")
             .arg(self.name.clone())
             .output();
@@ -178,7 +180,9 @@ impl ToolbxContainer {
     }
 
     pub fn start(&mut self) -> Result<(), ToolbxError> {
-        let output = Command::new("podman")
+        let output = Command::new("flatpak-spawn")
+            .arg("--host") //Command::new("podman")
+            .arg("podman")
             .arg("start")
             .arg(self.name.clone())
             .output();
@@ -258,11 +262,15 @@ fn test_start_non_existing_containter() {
 }
 
 pub fn run_cmd_toolbx_list_containers() -> String {
-    let output = Command::new("toolbox")
+    let output = Command::new("flatpak-spawn")
+        .arg("--host")
+        .arg("toolbox")
         .arg("list")
         .arg("--containers")
         .output()
         .expect("Failed to execute command");
+
+    println!("{:?}", String::from_utf8_lossy(&output.stdout).to_string());
 
     String::from_utf8_lossy(&output.stdout).to_string()
 }

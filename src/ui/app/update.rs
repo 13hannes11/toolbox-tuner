@@ -69,7 +69,9 @@ impl AppUpdate for AppModel {
             AppMsg::OpenToolbxTerminal(index) => {
                 if let Some(toolbx_container) = self.toolboxes.get_mut(index.current_index()) {
                     // TODO: support many terminals and check which are installed
-                    let output = Command::new("gnome-terminal")
+                    let output = Command::new("flatpak-spawn")
+                        .arg("--host")
+                        .arg("gnome-terminal") //Command::new("gnome-terminal")
                         .arg("--")
                         .arg("toolbox")
                         .arg("enter")
