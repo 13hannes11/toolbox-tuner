@@ -1,0 +1,10 @@
+version: "3"
+services:
+  toolbx-tuner-tests:
+    build: .
+    privileged: true
+    volumes:
+      - .:/mnt:z
+    security_opt:
+      - label=disable
+ 

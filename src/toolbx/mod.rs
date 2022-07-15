@@ -250,6 +250,7 @@ pub fn run_cmd_toolbx_list_containers() -> String {
 }
 
 #[test]
+#[ignore]
 fn test_cmd_list_containers() {
     // This requires toolbx to be installed
     let toolbox_cmd_container_header =
