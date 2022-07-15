@@ -1,5 +1,5 @@
+use serde::{Deserialize, Serialize};
 use std::{fmt::Display, iter::zip, process::Command, str::FromStr, string::ParseError, sync::Arc};
-use serde::{Serialize, Deserialize};
 
 #[derive(Debug, PartialEq)]
 pub enum ToolbxError {
@@ -101,33 +101,26 @@ impl ToolbxContainer {
         parse_cmd_list_containers(output.as_str())
     }
 
-    fn parse_status(output : &str) -> Result<PodmanInspectInfo, ToolbxError> {
-        let result : Result<PodmanInspectArray, _> = serde_json::from_str(output);
+    fn parse_status(output: &str) -> Result<PodmanInspectInfo, ToolbxError> {
+        let result: Result<PodmanInspectArray, _> = serde_json::from_str(output);
         match result {
-            Ok(inspect_vec) => {
-                match inspect_vec.first() {
-                    Some(info) => {
-                        Ok(info.clone())
-                    }
-                    None => {
-                        Err(ToolbxError::JSONSerializationError("Inspect command returned empty vecotr.".to_string()))
-                    }
-                }
-            }
-            Err(e) => {
-                Err(ToolbxError::JSONSerializationError(e.to_string()))
-            }
+            Ok(inspect_vec) => match inspect_vec.first() {
+                Some(info) => Ok(info.clone()),
+                None => Err(ToolbxError::JSONSerializationError(
+                    "Inspect command returned empty vecotr.".to_string(),
+                )),
+            },
+            Err(e) => Err(ToolbxError::JSONSerializationError(e.to_string())),
         }
-        
     }
 
-    pub fn update_status(&mut self) -> Result<(), ToolbxError>{
+    pub fn update_status(&mut self) -> Result<(), ToolbxError> {
         let output = Command::new("podman")
-        .arg("container")
-        .arg("inspect")
-        .arg(self.name.clone())
-        .output()
-        .expect("Failed to execute command");
+            .arg("container")
+            .arg("inspect")
+            .arg(self.name.clone())
+            .output()
+            .expect("Failed to execute command");
 
         let output = String::from_utf8_lossy(&output.stdout).to_string();
         let inspect_result = ToolbxContainer::parse_status(output.as_str())?;
@@ -215,12 +208,12 @@ fn test_inspect_parsing() {
         "\"Id\": \"ae05203091ab4cdf047a9aeba6af8a7bed8105f7f59d09a35d2b64c837ecac0d\",",
         "\"Created\": \"2021-12-10T20:51:43.140418098+01:00\",",
         "\"State\": {",
-               "\"Status\": \"running\"",
+        "\"Status\": \"running\"",
         "},",
         "\"Image\": \"ab8bc106d4a710a7a27c538762864610467b3559f80b413d30e0a1bfcfe272a5\",",
         "\"ImageName\": \"registry.fedoraproject.org/fedora-toolbox:35\",",
         "\"Name\": \"rust\"",
-     "}]"
+        "}]"
     );
     let inspect_info = ToolbxContainer::parse_status(podman_inspect).unwrap();
     assert_eq!("running", inspect_info.state.status);
@@ -228,15 +221,22 @@ fn test_inspect_parsing() {
 
 #[test]
 fn test_start_non_existing_containter() {
+    let name = "zy2lM6BdZoTnKHaVPkUJ".to_string();
     let mut tbx = ToolbxContainer {
         created: "".to_string(),
         id: "".to_string(),
-        name: "zy2lM6BdZoTnKHaVPkUJ".to_string(),
+        name: name.clone(),
         image: "".to_string(),
         status: ToolbxStatus::Exited,
     };
 
-    assert_eq!(Ok(()), tbx.start());
+    assert_eq!(
+        Err(ToolbxError::CommandUnsuccessfulError(format!(
+            "Error: no container with name or ID \"{}\" found: no such container\n",
+            name
+        ))),
+        tbx.start()
+    );
 }
 
 pub fn run_cmd_toolbx_list_containers() -> String {
