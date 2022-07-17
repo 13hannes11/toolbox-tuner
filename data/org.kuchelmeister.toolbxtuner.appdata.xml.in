@@ -1,14 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<component type="desktop">
-	<id>org.kuchelmeister.toolbxtuner.desktop</id>
+<component type="desktop-application">
+
+	<id>org.kuchelmeister.toolbxtuner</id>
 	<metadata_license>CC0-1.0</metadata_license>
 	<project_license>GPL-3.0-or-later</project_license>
   <name>Toolbx Tuner</name>
-  <summary></summary>
+  <summary>Manage and enhance your toolbxes (containertoolboxes)</summary>
 	<description>
-	  <p>No description</p>
+	  <p>An application to manage and enhance your containertoolboxes.</p>
 	</description>
-  <url>https://github.com/13hannes11/toolbx-tuner</url>
+
+  <url type="homepage">https://github.com/13hannes11/toolbx-tuner</url>
+  <url type="bugtracker">hhttps://github.com/13hannes11/toolbx-tuner/issues/</url>
   <update_contact>hannes_AT_kuchelmeister.org</update_contact>
   <developer_name>Hannes Kuchelmeister</developer_name>
+
+  <launchable type="desktop-id">org.kuchelmeister.toolbxtuner.desktop</launchable>
+
 </component>
+
