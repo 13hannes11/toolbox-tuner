@@ -3,7 +3,12 @@
 	<id>org.kuchelmeister.toolbxtuner.desktop</id>
 	<metadata_license>CC0-1.0</metadata_license>
 	<project_license>GPL-3.0-or-later</project_license>
+  <name>Toolbx Tuner</name>
+  <summary></summary>
 	<description>
 	  <p>No description</p>
 	</description>
+  <url>https://github.com/13hannes11/toolbx-tuner</url>
+  <update_contact>hannes_AT_kuchelmeister.org</update_contact>
+  <developer_name>Hannes Kuchelmeister</developer_name>
 </component>

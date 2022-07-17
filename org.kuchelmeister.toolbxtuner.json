@@ -44,7 +44,7 @@
             "sources" : [
                 {
                     "type" : "git",
-                    "url" : "https://github.com/13hannes11/toolbx-tuner"
+                    "url" : "https://github.com/13hannes11/toolbx-tuner.git"
                 }
             ]
         }
