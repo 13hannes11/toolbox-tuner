@@ -94,7 +94,25 @@ pub struct PodManInspectState {
     pub status: String,
 }
 
+pub enum ToolboxCreateParameter {
+    None,
+    Distro(String),
+    Image(String),
+    Release(String),
+}
+
 impl ToolbxContainer {
+    pub fn new(name: String) -> ToolbxContainer {
+        ToolbxContainer {
+            name: name,
+            ..Default::default()
+        }
+    }
+
+    pub fn create(name: String, parameter: ToolboxCreateParameter) {
+        todo!("Implement actual functionality to create toolbox via commandline")
+    }
+
     pub fn get_toolboxes() -> Vec<ToolbxContainer> {
         let output = run_cmd_toolbx_list_containers();
         println!("{}", output);
