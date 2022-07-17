@@ -133,7 +133,9 @@ impl ToolbxContainer {
     }
 
     pub fn update_status(&mut self) -> Result<(), ToolbxError> {
-        let output = Command::new("podman")
+        let output = Command::new("flatpak-spawn")
+            .arg("--host")
+            .arg("podman")
             .arg("container")
             .arg("inspect")
             .arg(self.name.clone())
