@@ -44,7 +44,8 @@
             "sources" : [
                 {
                     "type" : "git",
-                    "url" : "https://github.com/13hannes11/toolbx-tuner.git"
+                    "url" : "https://github.com/13hannes11/toolbx-tuner.git",
+                    "branch": "feature/flatpak"
                 }
             ]
         }
