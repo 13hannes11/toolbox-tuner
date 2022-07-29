@@ -37,6 +37,7 @@ impl FactoryPrototype for ToolbxEntry {
 
         view! {
             suffix_box = &gtk::Box{
+                /* application menu
                 append = &gtk::AspectFrame{
                     set_ratio: 1.0,
                     set_child = Some(&gtk::Button::from_icon_name(APP_ICON)) {
@@ -49,7 +50,7 @@ impl FactoryPrototype for ToolbxEntry {
                             send!(sender, AppMsg::ShowToolboxAppsRequest);
                         },
                     }
-                },
+                },*/
                 append = &gtk::AspectFrame{
                     set_ratio: 1.0,
                     set_child = Some(&gtk::Button::from_icon_name(TERMINAL_ICON)) {
