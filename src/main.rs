@@ -1,5 +1,6 @@
 use std::collections::VecDeque;
 
+use relm4::gtk::{Application, ApplicationWindow};
 use relm4::{factory::FactoryVecDeque, RelmApp};
 use toolbx::ToolbxContainer;
 use ui::app::model::AppModel;

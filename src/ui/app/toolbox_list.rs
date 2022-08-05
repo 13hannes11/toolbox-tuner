@@ -33,7 +33,8 @@ impl FactoryPrototype for ToolbxEntry {
     type Msg = AppMsg;
 
     fn init_view(&self, key: &DynamicIndex, sender: Sender<Self::Msg>) -> Self::Widgets {
-        let index = key.clone();
+        let index_terminal = key.clone();
+        let index_settings = key.clone();
 
         view! {
             suffix_box = &gtk::Box{
@@ -60,7 +61,7 @@ impl FactoryPrototype for ToolbxEntry {
                         set_tooltip_text: Some(TERMINAL_TOOLTIP),
                         set_css_classes: &["flat"],
                         connect_clicked(sender) => move |btn| {
-                            send!(sender, AppMsg::OpenToolbxTerminal(index.clone()));
+                            send!(sender, AppMsg::OpenToolbxTerminal(index_terminal.clone()));
                         },
                     }
                 },
@@ -73,7 +74,7 @@ impl FactoryPrototype for ToolbxEntry {
                         set_tooltip_text: Some(SETTINGS_TOOLTIP),
                         set_css_classes: &["circular"],
                         connect_clicked(sender) => move |btn| {
-                            send!(sender, AppMsg::ShowToolboxSettingsRequest);
+                            send!(sender, AppMsg::ShowToolboxSettingsRequest(index_settings.clone()));
                         },
                     },
                 }

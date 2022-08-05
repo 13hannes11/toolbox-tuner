@@ -24,7 +24,7 @@ use super::model::ToolboxSettingsDialogModel;
 impl Widgets<ToolboxSettingsDialogModel, AppModel> for ToolboxSettingsDialogWidgets {
     view! {
         adw::PreferencesWindow {
-            set_title: Some("Preferences: <Toolbox_name>"),
+            set_title:  watch!{ model.window_title.as_ref().map( |x| x.as_str() ) },
             set_transient_for: parent!{Some(&parent_widgets.main_window)},
             set_modal: true,
             set_visible: watch!(!model.hidden),

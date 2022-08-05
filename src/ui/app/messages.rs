@@ -5,7 +5,7 @@ use crate::toolbx::ToolbxContainer;
 use super::model::ToolbxEntry;
 
 pub enum AppMsg {
-    ShowToolboxSettingsRequest,
+    ShowToolboxSettingsRequest(DynamicIndex),
     ShowToolboxAppsRequest,
     ToolbxListUpdate(Vec<ToolbxContainer>),
     ToolbxContainerToggleStartStop(DynamicIndex),

@@ -15,11 +15,15 @@ use super::{messages::AppMsg, model::AppModel, workers::AsyncHandlerMsg};
 impl AppUpdate for AppModel {
     fn update(&mut self, msg: AppMsg, components: &AppComponents, _sender: Sender<AppMsg>) -> bool {
         match msg {
-            AppMsg::ShowToolboxSettingsRequest => {
-                components
-                    .toolbox_settings_dialog
-                    .send(ToolboxSettingsDialogMsg::Show)
-                    .unwrap();
+            AppMsg::ShowToolboxSettingsRequest(index) => {
+                if let Some(toolbx_entry) = self.toolboxes.get(index.current_index()) {
+                    components
+                        .toolbox_settings_dialog
+                        .send(ToolboxSettingsDialogMsg::Show(
+                            toolbx_entry.toolbx_container.clone(),
+                        ))
+                        .unwrap();
+                }
             }
             AppMsg::ShowToolboxAppsRequest => {
                 components
