@@ -11,16 +11,15 @@
   </description>
   <screenshots>
     <screenshot type="default">
-      <caption>Main application window showing multiple toolboxes. The toolboxes are shown as a list. Each toolbox has a start/stop button, an open in terminal button and a settings button.</caption>
-      <image type="source" width="1441" height="857">https://media.githubusercontent.com/media/13hannes11/toolbx-tuner/main/data/screenshots/main_light.png</image>
+      <caption>Main application window showing multiple toolboxes</caption>
+      <image type="source" width="1633" height="971">https://media.githubusercontent.com/media/13hannes11/toolbx-tuner/main/data/screenshots/main_light.png</image>
     </screenshot>
      <screenshot>
-      <caption>Main application window in dark mode.</caption>
-      <image type="source" width="1441" height="857">https://media.githubusercontent.com/media/13hannes11/toolbx-tuner/main/data/screenshots/main_dark.png</image>
+      <caption>Main application window in dark mode</caption>
+      <image type="source" width="1633" height="971">https://media.githubusercontent.com/media/13hannes11/toolbx-tuner/main/data/screenshots/main_dark.png</image>
     </screenshot>
-
   </screenshots>
-
+  <content_rating type="oars-1.0" />
   <url type="homepage">https://github.com/13hannes11/toolbx-tuner</url>
   <url type="bugtracker">https://github.com/13hannes11/toolbx-tuner/issues/</url>
   <update_contact>hannes_AT_kuchelmeister.org</update_contact>
