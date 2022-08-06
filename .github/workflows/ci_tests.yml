@@ -32,7 +32,7 @@ jobs:
     - uses: actions/checkout@v2
     - uses: bilelmoussaoui/flatpak-github-actions/flatpak-builder@v4
       with:
-        bundle: gtk-rust-template.flatpak
+        bundle: toolbxtuner.flatpak
         manifest-path: org.kuchelmeister.toolbxtuner.dev.json
         run-tests: true
         cache-key: flatpak-builder-${{ github.sha }}
