@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Hannes Kuchelmeister 2019 <hannes@kuchelmeister.org> -->
+<component type="desktop-application">
+  <id>@app-id@</id>
+  <metadata_license>CC0</metadata_license>
+  <project_license>GPL-3.0-or-later</project_license>
+  <name>Toolbx Tuner</name>
+  <summary>Manage and enhance your toolbxes (containertoolboxes)</summary>
+  <description>
+    <p>An application to manage and enhance your containertoolboxes.</p>
+  </description>
+<screenshots>
+    <screenshot type="default">
+      <caption>Main application window showing multiple toolboxes</caption>
+      <image type="source" width="1200" height="800">https://media.githubusercontent.com/media/13hannes11/toolbx-tuner/main/data/resources/screenshots/main_light.png</image>
+    </screenshot>
+     <screenshot>
+      <caption>Main application window in dark mode</caption>
+      <image type="source" width="1200" height="800">https://media.githubusercontent.com/media/13hannes11/toolbx-tuner/main/data/resources/screenshots/main_dark.png</image>
+    </screenshot>
+  </screenshots>
+  <content_rating type="oars-1.0" />
+  <releases>
+    <release version="0.0.0" type="development" date="2022-04-18" />
+  </releases>
+  <url type="homepage">https://github.com/13hannes11/toolbx-tuner</url>
+  <url type="bugtracker">https://github.com/13hannes11/toolbx-tuner/issues/</url>
+  <developer_name>Hannes Kuchelmeister</developer_name>
+  <update_contact>hannes_AT_kuchelmeister.org</update_contact>
+  <translation type="gettext">@gettext-package@</translation>
+  <launchable type="desktop-id">@app-id@.desktop</launchable>
+</component>

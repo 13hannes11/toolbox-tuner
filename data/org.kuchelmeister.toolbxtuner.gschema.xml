@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<schemalist gettext-domain="toolbx-tuner">
-	<schema id="org.kuchelmeister.toolbxtuner" path="/org/kuchelmeister/toolbxtuner/">
-	</schema>
-</schemalist>
