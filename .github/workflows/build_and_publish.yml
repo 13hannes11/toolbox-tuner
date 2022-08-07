@@ -14,7 +14,7 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: Build
-      run: docker-compose up
+      run: docker-compose -f containers/docker-compose.yml up
     - name: Show dir
       run: ls
     - name: Upload Artifact

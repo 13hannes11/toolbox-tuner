@@ -33,7 +33,6 @@ jobs:
     - uses: bilelmoussaoui/flatpak-github-actions/flatpak-builder@v4
       with:
         bundle: toolbxtuner.flatpak
-        manifest-path: org.kuchelmeister.toolbxtuner.dev.json
+        manifest-path: build-aux/org.kuchelmeister.ToolbxTuner.Devel.json
         run-tests: true
         cache-key: flatpak-builder-${{ github.sha }}
-

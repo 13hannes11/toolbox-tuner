@@ -3,6 +3,6 @@ services:
   gtk4-rs:
     image: ghcr.io/13hannes11/gtk4-rs-docker:latest-appimage
     volumes:
-      - .:/mnt:z
+      - ..:/mnt:z
     command: sh -c "cargo appimage"
 

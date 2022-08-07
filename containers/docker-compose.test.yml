@@ -4,7 +4,7 @@ services:
     build: .
     privileged: true
     volumes:
-      - .:/mnt:z
+      - ..:/mnt:z
     security_opt:
       - label=disable
  
