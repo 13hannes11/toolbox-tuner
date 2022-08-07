@@ -1,0 +1,4 @@
+data/org.kuchelmeister.ToolbxTuner.desktop.in.in
+data/org.kuchelmeister.ToolbxTuner.gschema.xml.in
+data/org.kuchelmeister.ToolbxTuner.metainfo.xml.in.in
+src/application.rs

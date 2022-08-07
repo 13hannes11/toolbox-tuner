@@ -1,76 +1,52 @@
-pkgdatadir = join_paths(get_option('prefix'), get_option('datadir'), meson.project_name())
-gnome = import('gnome')
-
-gnome.compile_resources('toolbx-tuner',
-  'toolbx_tuner.gresource.xml',
-  gresource_bundle: true,
-  install: true,
-  install_dir: pkgdatadir,
+global_conf = configuration_data()
+global_conf.set_quoted('APP_ID', application_id)
+global_conf.set_quoted('PKGDATADIR', pkgdatadir)
+global_conf.set_quoted('PROFILE', profile)
+global_conf.set_quoted('VERSION', version + version_suffix)
+global_conf.set_quoted('GETTEXT_PACKAGE', gettext_package)
+global_conf.set_quoted('LOCALEDIR', localedir)
+config = configure_file(
+  input: 'config.rs.in',
+  output: 'config.rs',
+  configuration: global_conf
 )
-
-conf = configuration_data()
-conf.set_quoted('VERSION', meson.project_version())
-conf.set_quoted('GETTEXT_PACKAGE', 'toolbx-tuner')
-conf.set_quoted('LOCALEDIR', join_paths(get_option('prefix'), get_option('localedir')))
-conf.set_quoted('PKGDATADIR', pkgdatadir)
-
-configure_file(
-    input: 'config.rs.in',
-    output: 'config.rs',
-    configuration: conf
-)
-
 # Copy the config.rs output to the source directory.
 run_command(
   'cp',
-  join_paths(meson.project_build_root(), 'src', 'config.rs'),
-  join_paths(meson.project_source_root(), 'src', 'config.rs'),
+  meson.project_build_root() / 'src' / 'config.rs',
+  meson.project_source_root() / 'src' / 'config.rs',
   check: true
 )
 
-rust_sources = files(
-  'main.rs',
-  'toolbx/mod.rs',
-  'ui/mod.rs',
-  'ui/ui_strings.rs',
-  'ui/app/mod.rs',
-  'ui/app/model.rs',
-  'ui/app/widgets.rs',
-  'ui/app/workers.rs',
-  'ui/app/messages.rs',
-  'ui/app/toolbox_list.rs',
-  'ui/app/update.rs',
-  'ui/components/mod.rs',
-  'ui/components/toolbox_apps/factory.rs',
-  'ui/components/toolbox_apps/messages.rs',
-  'ui/components/toolbox_apps/mod.rs',
-  'ui/components/toolbox_apps/model.rs',
-  'ui/components/toolbox_apps/update.rs',
-  'ui/components/toolbox_apps/widgets.rs',
-  'ui/components/toolbox_settings/messages.rs',
-  'ui/components/toolbox_settings/mod.rs',
-  'ui/components/toolbox_settings/model.rs',
-  'ui/components/toolbox_settings/update.rs',
-  'ui/components/toolbox_settings/widgets.rs',  
-)
+cargo_options = [ '--manifest-path', meson.project_source_root() / 'Cargo.toml' ]
+cargo_options += [ '--target-dir', meson.project_build_root() / 'src' ]
 
-sources = [cargo_sources, rust_sources]
+if get_option('profile') == 'default'
+  cargo_options += [ '--release' ]
+  rust_target = 'release'
+  message('Building in release mode')
+else
+  rust_target = 'debug'
+  message('Building in debug mode')
+endif
 
-cargo_script = find_program(join_paths(meson.project_source_root(), 'build-aux/cargo.sh'))
-cargo_release = custom_target(
+cargo_env = [ 'CARGO_HOME=' + meson.project_build_root() / 'cargo-home' ]
+
+cargo_build = custom_target(
   'cargo-build',
   build_by_default: true,
-  input: sources,
+  build_always_stale: true,
   output: meson.project_name(),
   console: true,
   install: true,
-  install_dir: get_option('bindir'),
+  install_dir: bindir,
+  depends: resources,
   command: [
-    cargo_script,
-    meson.project_build_root(),
-    meson.project_source_root(),
-    '@OUTPUT@',
-    get_option('buildtype'),
-    meson.project_name(),
+    'env',
+    cargo_env,
+    cargo, 'build',
+    cargo_options,
+    '&&',
+    'cp', 'src' / rust_target / meson.project_name(), '@OUTPUT@',
   ]
 )
