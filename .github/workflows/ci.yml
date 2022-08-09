@@ -44,3 +44,19 @@ jobs:
         cache-key: flatpak-builder-${{ github.sha }}
     - name: ls
       run: ls
+  publish-prerelease:
+    needs: [flatpak]
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref_name, 'main') && github.ref_type == 'branch'
+    steps:
+    - uses: actions/download-artifact@v2
+    - name: Show files
+      run: ls
+    - uses: "marvinpinto/action-automatic-releases@v1.2.1"
+      with:
+        repo_token: "${{ secrets.GITHUB_TOKEN }}"
+        prerelease: true
+        automatic_release_tag: dev
+        title: 'Latest Development Build'
+        files: |
+          **/*.flatpak
