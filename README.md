@@ -26,7 +26,7 @@ The application as of now is only available as a development build. You can down
 
 This project now uses *Gnome Builder* as main build tool and the Flatpak toolchain.
 
-## Recommended: Building using Flatpak
+### Recommended: Building using Flatpak
 
 
 1. Install dependencies:
