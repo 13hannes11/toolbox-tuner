@@ -54,7 +54,7 @@ impl Widgets<ToolboxSettingsDialogModel, AppModel> for ToolboxSettingsDialogWidg
                 add = &adw::PreferencesGroup {
                     set_title: "Home Folder",
                     add = &adw::PreferencesRow {
-                        set_title: "Seperate Home Folder",
+                        set_title: "Separate Home Folder",
                         set_child = Some(&adw::ActionRow) {
                             set_title: "Use separate home folder",
                             add_suffix = &gtk::Box {

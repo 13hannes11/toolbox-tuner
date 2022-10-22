@@ -10,7 +10,7 @@ Toolbx Tuner is a tool to improve the experience with [toolbx](https://container
 The project is currently only a user-interface concept. The program is not actually usable.
 
 - [x] UI prototype
-- [x] [Continious development releases](https://github.com/13hannes11/toolbx-tuner/releases/tag/dev)
+- [x] [Continuous development releases](https://github.com/13hannes11/toolbx-tuner/releases/tag/dev)
 - [x] Flatpak support
 - [ ] [MVP](https://github.com/13hannes11/toolbx-tuner/milestone/1)
 - [ ] Publish on Flathub
@@ -40,7 +40,7 @@ This project now uses *Gnome Builder* as main build tool and the Flatpak toolcha
 
 ### Traditional Compilation
 
-1. This project is built with `Relm4`, therefore, the pre-requisits for gtk4 need to be installed. Follow the [gtk4-rs book's](https://gtk-rs.org/gtk4-rs/stable/latest/book/installation_linux.html) installation instructions.
+1. This project is built with `Relm4`, therefore, the pre-requisites for gtk4 need to be installed. Follow the [gtk4-rs book's](https://gtk-rs.org/gtk4-rs/stable/latest/book/installation_linux.html) installation instructions.
 2. Compile with:
     * `cargo build` or
     * `cargo run`
