@@ -125,7 +125,7 @@ impl ToolbxContainer {
             Ok(inspect_vec) => match inspect_vec.first() {
                 Some(info) => Ok(info.clone()),
                 None => Err(ToolbxError::JSONSerializationError(
-                    "Inspect command returned empty vecotr.".to_string(),
+                    "Inspect command returned empty vector.".to_string(),
                 )),
             },
             Err(e) => Err(ToolbxError::JSONSerializationError(e.to_string())),
@@ -216,7 +216,7 @@ impl ToolbxContainer {
 }
 
 #[test]
-fn test_start_1non_existing_containter() {
+fn test_start_1non_existing_container() {
     // TODO: create container that exists based on simple image
     //       run command
     //       delete container
@@ -244,7 +244,7 @@ fn test_inspect_parsing() {
 }
 
 #[test]
-fn test_start_non_existing_containter() {
+fn test_start_non_existing_container() {
     let name = "zy2lM6BdZoTnKHaVPkUJ".to_string();
     let mut tbx = ToolbxContainer {
         created: "".to_string(),
