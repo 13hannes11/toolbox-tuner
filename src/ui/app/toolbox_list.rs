@@ -9,11 +9,11 @@ use relm4::{
 };
 
 use crate::{
-    toolbx::ToolbxStatus,
     ui::ui_strings::{
         APP_ICON, APP_TOOLTIP, SETTINGS_ICON, SETTINGS_TOOLTIP, SHUTDOWN_ICON, SHUTDOWN_TOOLTIP,
         START_ICON, START_TOOLTIP, TERMINAL_ICON, TERMINAL_TOOLTIP, UPDATE_ICON, UPDATE_TOOLTIP,
     },
+    util::toolbx::ToolbxStatus,
 };
 
 use super::{messages::AppMsg, model::ToolbxEntry};
@@ -38,20 +38,6 @@ impl FactoryPrototype for ToolbxEntry {
 
         view! {
             suffix_box = &gtk::Box{
-                /* application menu
-                append = &gtk::AspectFrame{
-                    set_ratio: 1.0,
-                    set_child = Some(&gtk::Button::from_icon_name(APP_ICON)) {
-                        set_margin_start: 10,
-                        set_margin_top: 10,
-                        set_margin_bottom: 10,
-                        set_tooltip_text: Some(APP_TOOLTIP),
-                        set_css_classes: &["flat"],
-                        connect_clicked(sender) => move |btn| {
-                            send!(sender, AppMsg::ShowToolboxAppsRequest);
-                        },
-                    }
-                },*/
                 append = &gtk::AspectFrame{
                     set_ratio: 1.0,
                     set_child = Some(&gtk::Button::from_icon_name(TERMINAL_ICON)) {
@@ -65,40 +51,8 @@ impl FactoryPrototype for ToolbxEntry {
                         },
                     }
                 },
-                append = &gtk::AspectFrame{
-                    set_ratio: 1.0,
-                    set_child = Some(&gtk::Button::from_icon_name(SETTINGS_ICON)) {
-                        set_margin_start: 10,set_margin_start: 10,
-                        set_margin_top: 10,
-                        set_margin_bottom: 10,
-                        set_tooltip_text: Some(SETTINGS_TOOLTIP),
-                        set_css_classes: &["circular"],
-                        connect_clicked(sender) => move |btn| {
-                            send!(sender, AppMsg::ShowToolboxSettingsRequest(index_settings.clone()));
-                        },
-                    },
-                }
             }
         };
-
-        /*
-        if self.update_available {
-            view! {
-                update_button = &gtk::AspectFrame{
-                        set_ratio: 1.0,
-                        set_child = Some(&gtk::Button::from_icon_name(UPDATE_ICON)) {
-                        set_margin_top: 10,
-                        set_margin_bottom: 10,
-                        set_margin_end: 10,
-                        set_tooltip_text: Some(UPDATE_TOOLTIP),
-                        set_css_classes: &["suggested-action"],
-                    }
-                }
-            };
-            suffix_box.prepend(&update_button);
-        }
-        */
-
         let mut status_button_tooltip = START_TOOLTIP;
         let mut status_button_icon = START_ICON;
 

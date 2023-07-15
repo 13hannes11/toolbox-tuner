@@ -1,6 +1,6 @@
 use relm4::{factory::FactoryVecDeque, Model};
 
-use crate::{toolbx::ToolbxContainer, ui::components::AppComponents};
+use crate::{ui::components::AppComponents, util::toolbx::ToolbxContainer};
 
 use super::{messages::AppMsg, widgets::AppWidgets};
 

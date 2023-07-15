@@ -5,7 +5,7 @@ use relm4::{send, MessageHandler, Sender};
 use tokio::runtime::{Builder, Runtime};
 use tokio::sync::mpsc::{channel, Sender as TokioSender};
 
-use crate::toolbx::ToolbxContainer;
+use crate::util::toolbx::ToolbxContainer;
 
 use super::{
     messages::AppMsg,
