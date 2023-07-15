@@ -7,14 +7,12 @@ Toolbx Tuner is a tool to improve the experience with [toolbx](https://container
 
 ## Project Roadmap
 
-The project is currently only a user-interface concept. The program is not actually usable.
+The project is currently only an mvp that only is able to list toolboxes and launch a terminal inside of them.
 
 - [x] UI prototype
 - [x] [Continuous development releases](https://github.com/13hannes11/toolbx-tuner/releases/tag/dev)
 - [x] Flatpak support
-- [ ] [MVP](https://github.com/13hannes11/toolbx-tuner/milestone/1)
 - [ ] Publish on Flathub
-- [ ] More settings
 
 
 ## Installing the application
