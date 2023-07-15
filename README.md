@@ -3,7 +3,8 @@
 
 Toolbx Tuner is a tool to improve the experience with [toolbx](https://containertoolbx.org/).
 
-![image](https://user-images.githubusercontent.com/9381167/163803291-91a53046-85c3-4ba1-8f3b-1ecd29343e89.png)
+![image](https://media.githubusercontent.com/media/13hannes11/toolbx-tuner/main/data/resources/screenshots/main_light.png)
+![image](https://media.githubusercontent.com/media/13hannes11/toolbx-tuner/main/data/resources/screenshots/main_dark.png)
 
 ## Project Roadmap
 
