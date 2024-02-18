@@ -65,8 +65,8 @@ impl MessageHandler<AppModel> for AsyncHandler {
         let _sender = sender.clone();
         rt.spawn(async move {
             loop {
-                tokio::time::sleep(Duration::from_secs(10)).await;
                 _sender.send(AsyncHandlerMsg::UpdateToolbxes).await;
+                tokio::time::sleep(Duration::from_secs(10)).await;
             }
         });
 
