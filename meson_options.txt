@@ -3,6 +3,7 @@ option(
   type: 'combo',
   choices: [
     'default',
+    'flathub',
     'development'
   ],
   value: 'default',
