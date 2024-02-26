@@ -11,8 +11,10 @@ use gtk::{gio, glib};
 
 use crate::config::{APP_ID, PROFILE};
 use crate::modals::about::AboutDialog;
+use crate::modals::unsupported::UnsupportedDialog;
 
 pub(super) struct App {
+    unsupported_dialog: Controller<UnsupportedDialog>,
     about_dialog: Controller<AboutDialog>,
 }
 
@@ -96,7 +98,15 @@ impl SimpleComponent for App {
             .launch(())
             .detach();
 
-        let model = Self { about_dialog };
+        let unsupported_dialog = UnsupportedDialog::builder()
+            .transient_for(root)
+            .launch(())
+            .detach();
+
+        let model = Self {
+            about_dialog,
+            unsupported_dialog,
+        };
 
         let widgets = view_output!();
 
@@ -115,6 +125,9 @@ impl SimpleComponent for App {
                 sender.send(()).unwrap();
             })
         };
+
+        let sender = model.unsupported_dialog.sender().clone();
+        sender.send(()).unwrap();
 
         actions.add_action(shortcuts_action);
         actions.add_action(about_action);

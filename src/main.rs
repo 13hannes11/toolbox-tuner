@@ -42,6 +42,7 @@ fn main() {
     app.set_accelerators_for_action::<QuitAction>(&["<Control>q"]);
 
     let app = RelmApp::from_app(app);
+    relm4_icons::initialize_icons();
 
     app.run::<App>(());
 }
