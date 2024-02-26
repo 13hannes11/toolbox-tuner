@@ -3,9 +3,8 @@ option(
   type: 'combo',
   choices: [
     'default',
-    'flathub',
     'development'
   ],
   value: 'default',
-  description: 'The build profile for Toolbx Tuner. One of "default" or "development".'
+  description: 'The build profile for Toolbox Tuner. One of "default" or "development".'
 )

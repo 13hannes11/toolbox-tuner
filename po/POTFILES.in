@@ -1,4 +1,6 @@
-data/org.kuchelmeister.ToolbxTuner.desktop.in.in
-data/org.kuchelmeister.ToolbxTuner.gschema.xml.in
-data/org.kuchelmeister.ToolbxTuner.metainfo.xml.in.in
+data/org.kuchelmeister.ToolboxTuner.desktop.in.in
+data/org.kuchelmeister.ToolboxTuner.gschema.xml.in
+data/org.kuchelmeister.ToolboxTuner.metainfo.xml.in.in
+data/resources/ui/shortcuts.ui
+data/resources/ui/window.ui
 src/application.rs

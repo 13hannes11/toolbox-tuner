@@ -25,19 +25,12 @@ if get_option('profile') == 'default'
   cargo_options += [ '--release' ]
   rust_target = 'release'
   message('Building in release mode')
-  cargo_env = [ 'CARGO_HOME=' + meson.project_build_root() / 'cargo-home' ]
-endif
-if get_option('profile') == 'flathub'
-  cargo_options += [ '--release', '--offline' ]
-  rust_target = 'release'
-  message('Building in flathub release mode')
-  cargo_env = [ 'CARGO_HOME=/run/build/toolbx-tuner/cargo' ]
-endif
-if get_option('profile') == 'development'
+else
   rust_target = 'debug'
   message('Building in debug mode')
-  cargo_env = [ 'CARGO_HOME=' + meson.project_build_root() / 'cargo-home' ]
 endif
+
+cargo_env = [ 'CARGO_HOME=' + meson.project_build_root() / 'cargo-home' ]
 
 cargo_build = custom_target(
   'cargo-build',

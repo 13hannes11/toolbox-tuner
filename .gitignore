@@ -1,16 +1,15 @@
-target/
-build/
-_build/
-builddir/
-build-aux/app
-.flatpak-builder
-src/config.rs
+/target/
+/build/
+/_build/
+/builddir/
+/build-aux/app
+/build-aux/.flatpak-builder/
+/src/config.rs
 *.ui.in~
 *.ui~
-.json~
-.flatpak/
-vendor
-flatpak_app
-libs
+/.flatpak/
+/vendor
+/.vscode
+.flatpak-builder/
 *.AppImage
 

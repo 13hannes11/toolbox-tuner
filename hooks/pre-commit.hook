@@ -2,16 +2,16 @@
 # Source: https://gitlab.gnome.org/GNOME/fractal/blob/master/hooks/pre-commit.hook
 
 install_rustfmt() {
-    if ! which rustup &> /dev/null; then
+    if ! which rustup >/dev/null 2>&1; then
         curl https://sh.rustup.rs -sSf  | sh -s -- -y
         export PATH=$PATH:$HOME/.cargo/bin
-        if ! which rustup &> /dev/null; then
+        if ! which rustup >/dev/null 2>&1; then
             echo "Failed to install rustup. Performing the commit without style checking."
             exit 0
         fi
     fi
 
-    if ! rustup component list|grep rustfmt &> /dev/null; then
+    if ! rustup component list|grep rustfmt >/dev/null 2>&1; then
         echo "Installing rustfmt…"
         rustup component add rustfmt
     fi
@@ -34,11 +34,11 @@ if ! which cargo >/dev/null 2>&1 || ! cargo fmt --help >/dev/null 2>&1; then
     echo ""
     while true
     do
-        echo -n "Install rustfmt via rustup? [y/n/Q]: "; read yn < /dev/tty
+        printf "%s" "Install rustfmt via rustup? [y/n/Q]: "; read yn < /dev/tty
         case $yn in
             [Yy]* ) install_rustfmt; break;;
             [Nn]* ) echo "Performing commit."; exit 0;;
-            [Qq]* | "" ) echo "Aborting commit."; exit -1 >/dev/null 2>&1;;
+            [Qq]* | "" ) echo "Aborting commit."; exit 1 >/dev/null 2>&1;;
             * ) echo "Invalid input";;
         esac
     done
@@ -51,7 +51,7 @@ if test $? != 0; then
     echo "--Checking style fail--"
     echo "Please fix the above issues, either manually or by running: cargo fmt --all"
 
-    exit -1
+    exit 1
 else
     echo "--Checking style pass--"
 fi

@@ -1,21 +1,15 @@
 [package]
-name = "toolbxtuner"
+name = "toolbox-tuner"
 version = "0.0.1"
 authors = ["Hannes Kuchelmeister <hannes@kuchelmeister.org>"]
 edition = "2021"
+publish = false
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+[profile.release]
+lto = true
 
 [dependencies]
-relm4 = {version="0.4", features = ["libadwaita", "macros"]}
-tokio = { version = "1", features = ["full"] }
-serde = { version = "1.0", features = ["derive"] }
-serde_json = "1.0"
-
-[package.metadata.appimage]
-auto_link = true
-auto_link_exclude_list = [
-    "libc.so*",
-    "libdl.so*",
-    "libpthread.so*",
-]
+gettext-rs = { version = "0.7", features = ["gettext-system"] }
+tracing = "0.1"
+tracing-subscriber = "0.3"
+relm4 = { version = "0.6.0", features = ["libadwaita", "gnome_44"] }
