@@ -1,15 +1,21 @@
 use adw::StatusPage;
-use gtk::prelude::GtkWindowExt;
+use gtk::prelude::{ButtonExt, GtkWindowExt};
 use relm4::view;
 use relm4::{adw, gtk, ComponentParts, ComponentSender, SimpleComponent};
 use relm4_icons::icon_name;
+
 pub struct UnsupportedDialog {}
+
+#[derive(Debug)]
+pub enum UnsupportedDialogOutput {
+    CloseApplication,
+}
 
 impl SimpleComponent for UnsupportedDialog {
     type Init = ();
     type Widgets = adw::Window;
     type Input = ();
-    type Output = ();
+    type Output = UnsupportedDialogOutput;
     type Root = adw::Window;
 
     fn init_root() -> Self::Root {
@@ -19,7 +25,7 @@ impl SimpleComponent for UnsupportedDialog {
     fn init(
         _: Self::Init,
         root: &Self::Root,
-        _sender: ComponentSender<Self>,
+        sender: ComponentSender<Self>,
     ) -> ComponentParts<Self> {
         let model = Self {};
 
@@ -30,16 +36,22 @@ impl SimpleComponent for UnsupportedDialog {
                         set_resizable: false,
                         set_default_width: 400,
 
+
                         StatusPage::new() {
                             set_icon_name: Some(icon_name::ISSUE),
                             set_title: "Missing requirements",
-                            set_description: Some("Make sure Toolbx and Gnome Terminal are installed."),
-                            set_child: Some(&gtk::Button::with_label("Goodbye!")),
+                            set_description: Some("Make sure Toolbox and Gnome Terminal are installed."),
+
+                            #[name = "btn_close"]
+                            gtk::Button::with_label("Goodbye!") {
+                                connect_clicked[sender] => move |_| {
+                                    sender.output(UnsupportedDialogOutput::CloseApplication).unwrap()
+                                },
+                            },
                         },
                 }
         }
-        // TODO: when dialgue closes close application
-        // TODO: close application on button press
+
         ComponentParts { model, widgets }
     }
 

@@ -12,6 +12,7 @@ use gtk::{gio, glib};
 use crate::config::{APP_ID, PROFILE};
 use crate::modals::about::AboutDialog;
 use crate::modals::unsupported::UnsupportedDialog;
+use crate::modals::unsupported::UnsupportedDialogOutput;
 
 pub(super) struct App {
     unsupported_dialog: Controller<UnsupportedDialog>,
@@ -101,7 +102,9 @@ impl SimpleComponent for App {
         let unsupported_dialog = UnsupportedDialog::builder()
             .transient_for(root)
             .launch(())
-            .detach();
+            .forward(sender.input_sender(), |msg| match msg {
+                UnsupportedDialogOutput::CloseApplication => AppMsg::Quit,
+            });
 
         let model = Self {
             about_dialog,
