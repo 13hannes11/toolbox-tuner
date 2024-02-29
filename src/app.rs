@@ -1,7 +1,7 @@
 use relm4::{
     actions::{RelmAction, RelmActionGroup},
     adw, gtk, main_application, Component, ComponentController, ComponentParts, ComponentSender,
-    Controller, SimpleComponent,
+    Controller,
 };
 
 use gtk::prelude::{
@@ -24,15 +24,21 @@ pub(super) enum AppMsg {
     Quit,
 }
 
+#[derive(Debug)]
+pub(super) enum AppCommandMsg {
+    PrerequisitsInstalled(bool),
+}
+
 relm4::new_action_group!(pub(super) WindowActionGroup, "win");
 //relm4::new_stateless_action!(PreferencesAction, WindowActionGroup, "preferences");
 relm4::new_stateless_action!(pub(super) ShortcutsAction, WindowActionGroup, "show-help-overlay");
 relm4::new_stateless_action!(AboutAction, WindowActionGroup, "about");
 
 #[relm4::component(pub)]
-impl SimpleComponent for App {
+impl Component for App {
     type Init = ();
     type Input = AppMsg;
+    type CommandOutput = AppCommandMsg;
     type Output = ();
     type Widgets = AppWidgets;
 
@@ -129,8 +135,10 @@ impl SimpleComponent for App {
             })
         };
 
-        let sender = model.unsupported_dialog.sender().clone();
-        sender.send(()).unwrap();
+        sender.spawn_oneshot_command(|| {
+            // TODO: actually check for compatibility
+            AppCommandMsg::PrerequisitsInstalled(true)
+        });
 
         actions.add_action(shortcuts_action);
         actions.add_action(about_action);
@@ -141,9 +149,25 @@ impl SimpleComponent for App {
         ComponentParts { model, widgets }
     }
 
-    fn update(&mut self, message: Self::Input, _sender: ComponentSender<Self>) {
+    fn update(&mut self, message: Self::Input, _sender: ComponentSender<Self>, _root: &Self::Root) {
         match message {
             AppMsg::Quit => main_application().quit(),
+        }
+    }
+
+    fn update_cmd(
+        &mut self,
+        message: Self::CommandOutput,
+        _sender: ComponentSender<Self>,
+        _: &Self::Root,
+    ) {
+        match message {
+            AppCommandMsg::PrerequisitsInstalled(false) => {
+                self.unsupported_dialog.sender().clone().send(()).unwrap()
+            }
+            AppCommandMsg::PrerequisitsInstalled(true) => {
+                // TODO: start process of fetching toolboxes
+            }
         }
     }
 
