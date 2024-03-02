@@ -47,4 +47,3 @@ fn main() {
 
     app.run::<App>(());
 }
-

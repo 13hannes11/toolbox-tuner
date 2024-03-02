@@ -1,5 +1,8 @@
 use crate::app::AppMsg;
 use gtk::prelude::{BoxExt, ButtonExt, GtkWindowExt, OrientableExt};
+use relm4::adw;
+use relm4::adw::prelude::ActionRowExt;
+use relm4::adw::prelude::PreferencesRowExt;
 use relm4::factory::{DynamicIndex, FactoryComponent, FactorySender, FactoryVecDeque};
 use relm4::{gtk, ComponentParts, ComponentSender, RelmApp, RelmWidgetExt, SimpleComponent};
 
@@ -21,28 +24,22 @@ impl FactoryComponent for Container {
     type CommandOutput = ();
     type Widgets = ContainerWidgets;
     type ParentInput = AppMsg;
-    type ParentWidget = gtk::Box;
+    type ParentWidget = gtk::ListBox;
 
     view! {
-        root = gtk::Box {
-            set_orientation: gtk::Orientation::Horizontal,
-            set_spacing: 10,
+        root = adw::ActionRow {
+            #[watch]
+            set_title: &self.value.to_string(),
 
-            #[name(label)]
-            gtk::Label {
-                #[watch]
-                set_label: &self.value.to_string(),
-                set_width_chars: 3,
-            },
 
             #[name(add_button)]
-            gtk::Button {
+            add_prefix = &gtk::Button {
                 set_label: "+",
                 connect_clicked => ContainerMsg::Start,
             },
 
             #[name(remove_button)]
-            gtk::Button {
+            add_suffix = &gtk::Button {
                 set_label: "-",
                 connect_clicked => ContainerMsg::Start,
             },
@@ -61,4 +58,3 @@ impl FactoryComponent for Container {
         }
     }
 }
-

@@ -1,4 +1,6 @@
+use crate::gtk::Align;
 use relm4::factory::FactoryVecDeque;
+use relm4::RelmWidgetExt;
 use relm4::{
     actions::{RelmAction, RelmActionGroup},
     adw, gtk, main_application, Component, ComponentController, ComponentParts, ComponentSender,
@@ -89,10 +91,13 @@ impl Component for App {
                 },
 
 
+
                 #[local_ref]
-                container_box -> gtk::Box {
-                    set_orientation: gtk::Orientation::Vertical,
-                }
+                container_box -> gtk::ListBox {
+                        set_valign: Align::Start,
+                        set_margin_all: 30,
+                        set_css_classes: &["boxed-list"],
+                },
             }
 
         }
@@ -115,7 +120,7 @@ impl Component for App {
                 UnsupportedDialogOutput::CloseApplication => AppMsg::Quit,
             });
 
-        let mut containers = FactoryVecDeque::new(gtk::Box::default(), sender.input_sender());
+        let mut containers = FactoryVecDeque::new(gtk::ListBox::default(), sender.input_sender());
         containers.guard().push_back(3);
 
         let model = Self {
@@ -211,4 +216,3 @@ impl AppWidgets {
         }
     }
 }
-
