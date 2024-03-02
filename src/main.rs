@@ -1,6 +1,7 @@
 #[rustfmt::skip]
 mod config;
 mod app;
+mod factories;
 mod modals;
 mod setup;
 
@@ -46,3 +47,4 @@ fn main() {
 
     app.run::<App>(());
 }
+

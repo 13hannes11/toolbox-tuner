@@ -1,3 +1,4 @@
+use relm4::factory::FactoryVecDeque;
 use relm4::{
     actions::{RelmAction, RelmActionGroup},
     adw, gtk, main_application, Component, ComponentController, ComponentParts, ComponentSender,
@@ -10,6 +11,7 @@ use gtk::prelude::{
 use gtk::{gio, glib};
 
 use crate::config::{APP_ID, PROFILE};
+use crate::factories::container_list::Container;
 use crate::modals::about::AboutDialog;
 use crate::modals::unsupported::UnsupportedDialog;
 use crate::modals::unsupported::UnsupportedDialogOutput;
@@ -17,10 +19,11 @@ use crate::modals::unsupported::UnsupportedDialogOutput;
 pub(super) struct App {
     unsupported_dialog: Controller<UnsupportedDialog>,
     about_dialog: Controller<AboutDialog>,
+    containers: FactoryVecDeque<Container>,
 }
 
 #[derive(Debug)]
-pub(super) enum AppMsg {
+pub enum AppMsg {
     Quit,
 }
 
@@ -85,10 +88,10 @@ impl Component for App {
                     }
                 },
 
-                gtk::Label {
-                    set_label: "Hello world!",
-                    add_css_class: "title-header",
-                    set_vexpand: true,
+
+                #[local_ref]
+                container_box -> gtk::Box {
+                    set_orientation: gtk::Orientation::Vertical,
                 }
             }
 
@@ -112,11 +115,16 @@ impl Component for App {
                 UnsupportedDialogOutput::CloseApplication => AppMsg::Quit,
             });
 
+        let mut containers = FactoryVecDeque::new(gtk::Box::default(), sender.input_sender());
+        containers.guard().push_back(3);
+
         let model = Self {
             about_dialog,
             unsupported_dialog,
+            containers,
         };
 
+        let container_box = model.containers.widget();
         let widgets = view_output!();
 
         let mut actions = RelmActionGroup::<WindowActionGroup>::new();
@@ -203,3 +211,4 @@ impl AppWidgets {
         }
     }
 }
+
