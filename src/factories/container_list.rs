@@ -8,6 +8,7 @@ use relm4::{gtk, ComponentParts, ComponentSender, RelmApp, RelmWidgetExt, Simple
 
 #[derive(Debug)]
 pub struct Container {
+    hash: String,
     value: u8,
 }
 
@@ -25,29 +26,27 @@ impl FactoryComponent for Container {
     type Widgets = ContainerWidgets;
     type ParentInput = AppMsg;
     type ParentWidget = gtk::ListBox;
+    type Index = String;
 
     view! {
         root = adw::ActionRow {
             #[watch]
-            set_title: &self.value.to_string(),
-
+            set_title: &self.hash,
 
             #[name(add_button)]
-            add_prefix = &gtk::Button {
-                set_label: "+",
-                connect_clicked => ContainerMsg::Start,
-            },
-
-            #[name(remove_button)]
             add_suffix = &gtk::Button {
-                set_label: "-",
+                #[watch]
+                set_label: &self.value.to_string(),
                 connect_clicked => ContainerMsg::Start,
             },
         }
     }
 
-    fn init_model(value: Self::Init, _index: &DynamicIndex, _sender: FactorySender<Self>) -> Self {
-        Self { value }
+    fn init_model(value: Self::Init, index: &Self::Index, _sender: FactorySender<Self>) -> Self {
+        Self {
+            hash: index.clone(),
+            value,
+        }
     }
 
     fn update(&mut self, msg: Self::Input, _sender: FactorySender<Self>) {

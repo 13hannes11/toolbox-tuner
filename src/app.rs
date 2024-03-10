@@ -1,5 +1,5 @@
 use crate::gtk::Align;
-use relm4::factory::FactoryVecDeque;
+use relm4::factory::FactoryHashMap;
 use relm4::RelmWidgetExt;
 use relm4::{
     actions::{RelmAction, RelmActionGroup},
@@ -21,7 +21,7 @@ use crate::modals::unsupported::UnsupportedDialogOutput;
 pub(super) struct App {
     unsupported_dialog: Controller<UnsupportedDialog>,
     about_dialog: Controller<AboutDialog>,
-    containers: FactoryVecDeque<Container>,
+    containers: FactoryHashMap<String, Container>,
 }
 
 #[derive(Debug)]
@@ -120,8 +120,9 @@ impl Component for App {
                 UnsupportedDialogOutput::CloseApplication => AppMsg::Quit,
             });
 
-        let mut containers = FactoryVecDeque::new(gtk::ListBox::default(), sender.input_sender());
-        containers.guard().push_back(3);
+        let mut containers = FactoryHashMap::new(gtk::ListBox::default(), sender.input_sender());
+        containers.insert("123".to_string(), 2);
+        containers.insert("124".to_string(), 3);
 
         let model = Self {
             about_dialog,
