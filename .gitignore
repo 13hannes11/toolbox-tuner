@@ -12,4 +12,5 @@
 /.vscode
 .flatpak-builder/
 *.AppImage
+*.json~
 
