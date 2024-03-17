@@ -4,6 +4,7 @@ use relm4::adw::prelude::ActionRowExt;
 use relm4::adw::prelude::PreferencesRowExt;
 use relm4::factory::{FactoryComponent, FactorySender};
 use relm4::gtk;
+use relm4_icons::icon_names;
 
 #[derive(Debug)]
 pub struct Container {
@@ -29,12 +30,18 @@ impl FactoryComponent for Container {
     view! {
         root = adw::ActionRow {
             #[watch]
-            set_title: &self.hash,
+            set_title: format!{"{}: {}", self.hash, self.value.to_string()}.as_str(),
+
+            #[name(play_button)]
+            add_prefix = &gtk::Button {
+                // TODO: make component with state that either is waiting, play or pause
+                set_icon_name: icon_names::PLAY,
+                connect_clicked => ContainerMsg::Start,
+            },
 
             #[name(add_button)]
             add_suffix = &gtk::Button {
-                #[watch]
-                set_label: &self.value.to_string(),
+                set_icon_name: icon_names::TERMINAL,
                 connect_clicked => ContainerMsg::Start,
             },
         }
