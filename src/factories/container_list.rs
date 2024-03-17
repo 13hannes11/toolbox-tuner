@@ -1,10 +1,9 @@
-use crate::app::AppMsg;
-use gtk::prelude::{BoxExt, ButtonExt, GtkWindowExt, OrientableExt};
+use gtk::prelude::ButtonExt;
 use relm4::adw;
 use relm4::adw::prelude::ActionRowExt;
 use relm4::adw::prelude::PreferencesRowExt;
-use relm4::factory::{DynamicIndex, FactoryComponent, FactorySender, FactoryVecDeque};
-use relm4::{gtk, ComponentParts, ComponentSender, RelmApp, RelmWidgetExt, SimpleComponent};
+use relm4::factory::{FactoryComponent, FactorySender};
+use relm4::gtk;
 
 #[derive(Debug)]
 pub struct Container {
