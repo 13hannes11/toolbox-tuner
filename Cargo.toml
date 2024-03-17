@@ -12,5 +12,5 @@ lto = true
 gettext-rs = { version = "0.7", features = ["gettext-system"] }
 tracing = "0.1"
 tracing-subscriber = "0.3"
-relm4 = { version = "0.8.1", features = ["libadwaita", "gnome_44"] }
+relm4 = { version = "0.8.1", features = ["libadwaita", "gnome_45"] }
 relm4-icons = { version = "0.8.1" }
