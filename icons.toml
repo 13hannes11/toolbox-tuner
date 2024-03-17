@@ -1,0 +1,7 @@
+# Recommended: Specify your app ID *OR* your base resource path for more robust icon loading
+app_id = "org.kuchelmeister.ToolboxTuner"
+
+# List of icon names you found (shipped with this crate)
+# Note: the file ending `-symbolic.svg` isn't part of the icon name.
+icons = ["issue"]
+

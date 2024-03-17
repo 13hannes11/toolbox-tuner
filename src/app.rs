@@ -59,9 +59,11 @@ impl Component for App {
 
     view! {
         main_window = adw::ApplicationWindow::new(&main_application()) {
+            set_visible: true,
+
             connect_close_request[sender] => move |_| {
                 sender.input(AppMsg::Quit);
-                gtk::Inhibit(true)
+                glib::Propagation::Stop
             },
 
             #[wrap(Some)]
@@ -105,22 +107,22 @@ impl Component for App {
 
     fn init(
         _init: Self::Init,
-        root: &Self::Root,
+        root: Self::Root,
         sender: ComponentSender<Self>,
     ) -> ComponentParts<Self> {
         let about_dialog = AboutDialog::builder()
-            .transient_for(root)
+            .transient_for(&root)
             .launch(())
             .detach();
 
         let unsupported_dialog = UnsupportedDialog::builder()
-            .transient_for(root)
+            .transient_for(&root)
             .launch(())
             .forward(sender.input_sender(), |msg| match msg {
                 UnsupportedDialogOutput::CloseApplication => AppMsg::Quit,
             });
 
-        let mut containers = FactoryHashMap::new(gtk::ListBox::default(), sender.input_sender());
+        let mut containers = FactoryHashMap::builder().launch_default().detach();
         containers.insert("123".to_string(), 2);
         containers.insert("124".to_string(), 3);
 

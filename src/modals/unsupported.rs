@@ -2,7 +2,7 @@ use adw::StatusPage;
 use gtk::prelude::{ButtonExt, GtkWindowExt};
 use relm4::view;
 use relm4::{adw, gtk, ComponentParts, ComponentSender, SimpleComponent};
-use relm4_icons::icon_name;
+use relm4_icons::icon_names;
 
 pub struct UnsupportedDialog {}
 
@@ -24,7 +24,7 @@ impl SimpleComponent for UnsupportedDialog {
 
     fn init(
         _: Self::Init,
-        root: &Self::Root,
+        root: Self::Root,
         sender: ComponentSender<Self>,
     ) -> ComponentParts<Self> {
         let model = Self {};
@@ -38,7 +38,7 @@ impl SimpleComponent for UnsupportedDialog {
 
 
                         StatusPage::new() {
-                            set_icon_name: Some(icon_name::ISSUE),
+                            set_icon_name: Some(icon_names::ISSUE),
                             set_title: "Missing requirements",
                             set_description: Some("Make sure Toolbox and Gnome Terminal are installed."),
 

@@ -24,7 +24,6 @@ impl FactoryComponent for Container {
     type Output = ();
     type CommandOutput = ();
     type Widgets = ContainerWidgets;
-    type ParentInput = AppMsg;
     type ParentWidget = gtk::ListBox;
     type Index = String;
 
