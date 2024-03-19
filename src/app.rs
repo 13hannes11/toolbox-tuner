@@ -96,6 +96,7 @@ impl Component for App {
 
                 #[local_ref]
                 container_box -> gtk::ListBox {
+                        set_selection_mode: gtk::SelectionMode::None,
                         set_valign: Align::Start,
                         set_margin_all: 30,
                         set_css_classes: &["boxed-list"],
@@ -124,7 +125,13 @@ impl Component for App {
 
         let mut containers = FactoryHashMap::builder().launch_default().detach();
         containers.insert("123".to_string(), 2);
-        containers.insert("124".to_string(), 3);
+        containers.insert("abc".to_string(), 3);
+        containers.insert("45435".to_string(), 3);
+        containers.insert("1dsal;k1;23".to_string(), 3);
+        containers.insert("afdsaf".to_string(), 3);
+        containers.insert("5344".to_string(), 3);
+        containers.insert("1242344".to_string(), 3);
+        containers.insert("1265464".to_string(), 3);
 
         let model = Self {
             about_dialog,
