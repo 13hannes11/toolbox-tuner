@@ -4,6 +4,7 @@ use relm4::adw::prelude::ActionRowExt;
 use relm4::adw::prelude::PreferencesRowExt;
 use relm4::factory::{FactoryComponent, FactorySender};
 use relm4::gtk;
+use relm4::gtk::prelude::WidgetExt;
 use relm4_icons::icon_names;
 
 #[derive(Debug)]
@@ -36,13 +37,25 @@ impl FactoryComponent for Container {
             add_prefix = &gtk::Button {
                 // TODO: make component with state that either is waiting, play or pause
                 set_icon_name: icon_names::PLAY,
+                set_margin_top: 10,
+                set_margin_bottom: 10,
+                set_css_classes: &["circular"],
                 connect_clicked => ContainerMsg::Start,
             },
 
-            #[name(add_button)]
-            add_suffix = &gtk::Button {
-                set_icon_name: icon_names::TERMINAL,
-                connect_clicked => ContainerMsg::Start,
+            add_suffix = &gtk::Box{
+                gtk::AspectFrame{
+                    set_ratio: 1.0,
+                    #[name(add_button)]
+                    gtk::Button {
+                        set_icon_name: icon_names::TERMINAL,
+                        set_margin_start: 10,
+                        set_margin_top: 10,
+                        set_margin_bottom: 10,
+                        set_css_classes: &["flat"],
+                        connect_clicked => ContainerMsg::Start,
+                    },
+                },
             },
         }
     }

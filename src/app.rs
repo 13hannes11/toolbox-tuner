@@ -100,6 +100,7 @@ impl Component for App {
 
                     #[local_ref]
                     container_box -> gtk::ListBox {
+                        set_size_request: (200, -1),
                         set_selection_mode: gtk::SelectionMode::None,
                         set_valign: Align::Start,
                         set_margin_all: 30,
