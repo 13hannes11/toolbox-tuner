@@ -1,5 +1,6 @@
 use crate::gtk::Align;
 use relm4::factory::FactoryHashMap;
+use relm4::gtk::PolicyType;
 use relm4::RelmWidgetExt;
 use relm4::{
     actions::{RelmAction, RelmActionGroup},
@@ -92,14 +93,19 @@ impl Component for App {
                     }
                 },
 
+                gtk::ScrolledWindow {
+                    set_hexpand: true,
+                    set_vexpand: true,
+                    set_hscrollbar_policy: PolicyType::Never,
 
-
-                #[local_ref]
-                container_box -> gtk::ListBox {
+                    #[local_ref]
+                    container_box -> gtk::ListBox {
                         set_selection_mode: gtk::SelectionMode::None,
                         set_valign: Align::Start,
                         set_margin_all: 30,
                         set_css_classes: &["boxed-list"],
+                    },
+
                 },
             }
 
