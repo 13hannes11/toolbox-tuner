@@ -33,14 +33,19 @@ impl FactoryComponent for Container {
             #[watch]
             set_title: format!{"{}: {}", self.hash, self.value.to_string()}.as_str(),
 
-            #[name(play_button)]
-            add_prefix = &gtk::Button {
-                // TODO: make component with state that either is waiting, play or pause
-                set_icon_name: icon_names::PLAY,
-                set_margin_top: 10,
-                set_margin_bottom: 10,
-                set_css_classes: &["circular"],
-                connect_clicked => ContainerMsg::Start,
+            add_prefix = &gtk::Box{
+                gtk::AspectFrame{
+                    set_ratio: 1.0,
+                    #[name(play_button)]
+                    gtk::Button {
+                        // TODO: make component with state that either is waiting, play or pause
+                        set_icon_name: icon_names::PLAY,
+                        set_margin_top: 10,
+                        set_margin_bottom: 10,
+                        set_css_classes: &["circular"],
+                        connect_clicked => ContainerMsg::Start,
+                    },
+                },
             },
 
             add_suffix = &gtk::Box{
