@@ -2,6 +2,7 @@ mod app;
 mod config;
 mod factories;
 mod modals;
+mod util;
 
 use crate::config::{APP_ID, GETTEXT_PACKAGE, LOCALEDIR, RESOURCES_FILE};
 use gettextrs::{gettext, LocaleCategory};

@@ -10,17 +10,23 @@ use relm4_icons::icon_names;
 #[derive(Debug)]
 pub struct Container {
     hash: String,
-    value: u8,
+    value: String,
 }
 
 #[derive(Debug)]
 pub enum ContainerMsg {
     Start,
+    Stop,
+    OpenTerminal,
+}
+
+pub struct ContainerInit {
+    pub name: String,
 }
 
 #[relm4::factory(pub)]
 impl FactoryComponent for Container {
-    type Init = u8;
+    type Init = ContainerInit;
     type Input = ContainerMsg;
     type Output = ();
     type CommandOutput = ();
@@ -31,7 +37,8 @@ impl FactoryComponent for Container {
     view! {
         root = adw::ActionRow {
             #[watch]
-            set_title: format!{"{}: {}", self.hash, self.value.to_string()}.as_str(),
+            set_title: &self.value,
+            set_subtitle: &self.hash,
 
             add_prefix = &gtk::Box{
                 gtk::AspectFrame{
@@ -58,7 +65,7 @@ impl FactoryComponent for Container {
                         set_margin_top: 10,
                         set_margin_bottom: 10,
                         set_css_classes: &["flat"],
-                        connect_clicked => ContainerMsg::Start,
+                        connect_clicked => ContainerMsg::OpenTerminal,
                     },
                 },
             },
@@ -68,15 +75,15 @@ impl FactoryComponent for Container {
     fn init_model(value: Self::Init, index: &Self::Index, _sender: FactorySender<Self>) -> Self {
         Self {
             hash: index.clone(),
-            value,
+            value: value.name.clone(),
         }
     }
 
     fn update(&mut self, msg: Self::Input, _sender: FactorySender<Self>) {
         match msg {
-            ContainerMsg::Start => {
-                self.value = self.value.wrapping_add(1);
-            }
+            ContainerMsg::Start => {}
+            ContainerMsg::Stop => {}
+            ContainerMsg::OpenTerminal => {}
         }
     }
 }

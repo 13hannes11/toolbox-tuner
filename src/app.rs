@@ -1,4 +1,5 @@
 use crate::gtk::Align;
+use crate::util::toolbox::ToolbxContainer;
 use relm4::factory::FactoryHashMap;
 use relm4::gtk::PolicyType;
 use relm4::RelmWidgetExt;
@@ -39,6 +40,7 @@ relm4::new_action_group!(pub(super) WindowActionGroup, "win");
 //relm4::new_stateless_action!(PreferencesAction, WindowActionGroup, "preferences");
 relm4::new_stateless_action!(pub(super) ShortcutsAction, WindowActionGroup, "show-help-overlay");
 relm4::new_stateless_action!(AboutAction, WindowActionGroup, "about");
+use crate::factories::container_list::ContainerInit;
 
 #[relm4::component(pub)]
 impl Component for App {
@@ -130,20 +132,17 @@ impl Component for App {
                 UnsupportedDialogOutput::CloseApplication => AppMsg::Quit,
             });
 
+        let toolboxes = ToolbxContainer::get_toolboxes();
+
         let mut containers = FactoryHashMap::builder().launch_default().detach();
-        containers.insert("123".to_string(), 2);
-        containers.insert("abc".to_string(), 3);
-        containers.insert("45435".to_string(), 3);
-        containers.insert("1dsal;k1;23".to_string(), 3);
-        containers.insert("afdsaf".to_string(), 3);
-        containers.insert("5344".to_string(), 3);
-        containers.insert("1242344".to_string(), 3);
-        containers.insert("1265464".to_string(), 3);
-        containers.insert(
-            "126222222222222222222222222222222222222222233333333333333333333333333333333325464"
-                .to_string(),
-            3,
-        );
+        toolboxes.iter().for_each(|toolbox| {
+            &containers.insert(
+                toolbox.id.clone(),
+                ContainerInit {
+                    name: toolbox.name.clone(),
+                },
+            );
+        });
 
         let model = Self {
             about_dialog,
