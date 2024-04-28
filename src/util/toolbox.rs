@@ -1,5 +1,5 @@
 use serde::{Deserialize, Serialize};
-use std::{fmt::Display, iter::zip, process::Command, str::FromStr, string::ParseError, sync::Arc};
+use std::{fmt::Display, process::Command, str::FromStr};
 
 #[derive(Debug, PartialEq)]
 pub enum ToolbxError {

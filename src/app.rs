@@ -1,5 +1,7 @@
 use crate::gtk::Align;
+use crate::gtk::Spinner;
 use crate::util::toolbox::ToolbxContainer;
+use relm4::adw::prelude::PreferencesGroupExt;
 use relm4::factory::FactoryHashMap;
 use relm4::gtk::PolicyType;
 use relm4::RelmWidgetExt;
@@ -8,6 +10,9 @@ use relm4::{
     adw, gtk, main_application, Component, ComponentController, ComponentParts, ComponentSender,
     Controller,
 };
+use std::collections::HashSet;
+use std::thread::sleep;
+use std::time::Duration;
 
 use gtk::prelude::{
     ApplicationExt, ApplicationWindowExt, GtkWindowExt, OrientableExt, SettingsExt, WidgetExt,
@@ -24,6 +29,7 @@ pub(super) struct App {
     unsupported_dialog: Controller<UnsupportedDialog>,
     about_dialog: Controller<AboutDialog>,
     containers: FactoryHashMap<String, Container>,
+    refresh_spinner: Spinner,
 }
 
 #[derive(Debug)]
@@ -34,6 +40,7 @@ pub enum AppMsg {
 #[derive(Debug)]
 pub(super) enum AppCommandMsg {
     PrerequisitsInstalled(bool),
+    UpdateToolboxes(Vec<ToolbxContainer>),
 }
 
 relm4::new_action_group!(pub(super) WindowActionGroup, "win");
@@ -100,13 +107,22 @@ impl Component for App {
                     set_vexpand: true,
                     set_hscrollbar_policy: PolicyType::Never,
 
-                    #[local_ref]
-                    container_box -> gtk::ListBox {
-                        set_size_request: (200, -1),
-                        set_selection_mode: gtk::SelectionMode::None,
-                        set_valign: Align::Start,
+                    adw::PreferencesGroup{
+                        set_title: "Toolboxes",
                         set_margin_all: 30,
-                        set_css_classes: &["boxed-list"],
+
+
+                        set_header_suffix: Some(
+                            &model.refresh_spinner
+                        ),
+
+                        #[local_ref]
+                        container_box -> gtk::ListBox {
+                            set_size_request: (200, -1),
+                            set_selection_mode: gtk::SelectionMode::None,
+                            set_valign: Align::Start,
+                            set_css_classes: &["boxed-list"],
+                        },
                     },
 
                 },
@@ -132,22 +148,15 @@ impl Component for App {
                 UnsupportedDialogOutput::CloseApplication => AppMsg::Quit,
             });
 
-        let toolboxes = ToolbxContainer::get_toolboxes();
+        let containers = FactoryHashMap::builder().launch_default().detach();
 
-        let mut containers = FactoryHashMap::builder().launch_default().detach();
-        toolboxes.iter().for_each(|toolbox| {
-            &containers.insert(
-                toolbox.id.clone(),
-                ContainerInit {
-                    name: toolbox.name.clone(),
-                },
-            );
-        });
+        let refresh_spinner = gtk::Spinner::new();
 
         let model = Self {
             about_dialog,
             unsupported_dialog,
             containers,
+            refresh_spinner,
         };
 
         let container_box = model.containers.widget();
@@ -192,15 +201,48 @@ impl Component for App {
     fn update_cmd(
         &mut self,
         message: Self::CommandOutput,
-        _sender: ComponentSender<Self>,
+        sender: ComponentSender<Self>,
         _: &Self::Root,
     ) {
         match message {
             AppCommandMsg::PrerequisitsInstalled(false) => {
                 self.unsupported_dialog.sender().clone().send(()).unwrap()
             }
+
             AppCommandMsg::PrerequisitsInstalled(true) => {
                 // TODO: start process of fetching toolboxes
+                self.refresh_spinner.set_spinning(true);
+                sender.spawn_oneshot_command(|| {
+                    AppCommandMsg::UpdateToolboxes(ToolbxContainer::get_toolboxes())
+                })
+            }
+            AppCommandMsg::UpdateToolboxes(toolboxes) => {
+                let mut updated_containers = HashSet::<String>::new();
+                toolboxes.iter().for_each(|toolbox| {
+                    self.containers.insert(
+                        toolbox.id.clone(),
+                        ContainerInit {
+                            name: toolbox.name.clone(),
+                        },
+                    );
+                    updated_containers.insert(toolbox.id.clone());
+                });
+                let obsolete_containers: Vec<String> = self
+                    .containers
+                    .iter()
+                    .map(|(hash, _)| hash.clone())
+                    .filter(|hash| !updated_containers.contains(hash))
+                    .collect();
+                obsolete_containers.into_iter().for_each(|hash| {
+                    self.containers.remove(&hash);
+                });
+
+                self.refresh_spinner.set_spinning(false);
+
+                sender.spawn_oneshot_command(|| {
+                    sleep(Duration::from_millis(2000));
+                    AppCommandMsg::PrerequisitsInstalled(true)
+                });
             }
         }
     }
