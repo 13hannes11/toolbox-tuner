@@ -41,6 +41,7 @@ pub enum AppMsg {
 pub(super) enum AppCommandMsg {
     PrerequisitsInstalled(bool),
     UpdateToolboxes(Vec<ToolbxContainer>),
+    InitiateRefresh,
 }
 
 relm4::new_action_group!(pub(super) WindowActionGroup, "win");
@@ -209,7 +210,7 @@ impl Component for App {
                 self.unsupported_dialog.sender().clone().send(()).unwrap()
             }
 
-            AppCommandMsg::PrerequisitsInstalled(true) => {
+            AppCommandMsg::PrerequisitsInstalled(true) | AppCommandMsg::InitiateRefresh => {
                 // TODO: start process of fetching toolboxes
                 self.refresh_spinner.set_spinning(true);
                 sender.spawn_oneshot_command(|| {
@@ -241,7 +242,7 @@ impl Component for App {
 
                 sender.spawn_oneshot_command(|| {
                     sleep(Duration::from_millis(2000));
-                    AppCommandMsg::PrerequisitsInstalled(true)
+                    AppCommandMsg::InitiateRefresh
                 });
             }
         }
