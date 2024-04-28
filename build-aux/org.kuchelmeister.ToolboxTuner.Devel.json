@@ -1,14 +1,14 @@
 {
-    "id": "org.kuchelmeister.ToolboxTuner.Devel",
-    "runtime": "org.gnome.Platform",
-    "runtime-version": "45",
-    "sdk": "org.gnome.Sdk",
-    "sdk-extensions": [
+    "id" : "org.kuchelmeister.ToolboxTuner.Devel",
+    "runtime" : "org.gnome.Platform",
+    "runtime-version" : "46",
+    "sdk" : "org.gnome.Sdk",
+    "sdk-extensions" : [
         "org.freedesktop.Sdk.Extension.rust-stable",
         "org.freedesktop.Sdk.Extension.llvm15"
     ],
-    "command": "toolbox-tuner",
-    "finish-args": [
+    "command" : "toolbox-tuner",
+    "finish-args" : [
         "--talk-name=org.freedesktop.Flatpak",
         "--socket=fallback-x11",
         "--socket=wayland",
@@ -18,36 +18,36 @@
         "--env=RUST_BACKTRACE=1",
         "--share=ipc"
     ],
-    "build-options": {
-        "append-path": "/usr/lib/sdk/rust-stable/bin:/usr/lib/sdk/llvm15/bin",
-        "prepend-ld-library-path": "/usr/lib/sdk/llvm15/lib",
-        "build-args": [
+    "build-options" : {
+        "append-path" : "/usr/lib/sdk/rust-stable/bin:/usr/lib/sdk/llvm15/bin",
+        "prepend-ld-library-path" : "/usr/lib/sdk/llvm15/lib",
+        "build-args" : [
             "--share=network"
         ],
-        "env": {
-            "CARGO_REGISTRIES_CRATES_IO_PROTOCOL": "sparse",
-            "CARGO_TARGET_X86_64_UNKNOWN_LINUX_GNU_LINKER": "clang",
-            "CARGO_TARGET_X86_64_UNKNOWN_LINUX_GNU_RUSTFLAGS": "-C link-arg=-fuse-ld=/usr/lib/sdk/rust-stable/bin/mold",
-            "CARGO_TARGET_AARCH64_UNKNOWN_LINUX_GNU_LINKER": "clang",
-            "CARGO_TARGET_AARCH64_UNKNOWN_LINUX_GNU_RUSTFLAGS": "-C link-arg=-fuse-ld=/usr/lib/sdk/rust-stable/bin/mold"
+        "env" : {
+            "CARGO_TARGET_X86_64_UNKNOWN_LINUX_GNU_LINKER" : "clang",
+            "CARGO_REGISTRIES_CRATES_IO_PROTOCOL" : "sparse",
+            "CARGO_TARGET_X86_64_UNKNOWN_LINUX_GNU_RUSTFLAGS" : "-C link-arg=-fuse-ld=/usr/lib/sdk/rust-stable/bin/mold",
+            "CARGO_TARGET_AARCH64_UNKNOWN_LINUX_GNU_LINKER" : "clang",
+            "CARGO_TARGET_AARCH64_UNKNOWN_LINUX_GNU_RUSTFLAGS" : "-C link-arg=-fuse-ld=/usr/lib/sdk/rust-stable/bin/mold"
         },
-        "test-args": [
+        "test-args" : [
             "--socket=x11",
             "--share=network"
         ]
     },
-    "modules": [
+    "modules" : [
         {
-            "name": "toolbox-tuner",
-            "buildsystem": "meson",
-            "run-tests": true,
-            "config-opts": [
+            "name" : "toolbox-tuner",
+            "buildsystem" : "meson",
+            "run-tests" : true,
+            "config-opts" : [
                 "-Dprofile=development"
             ],
-            "sources": [
+            "sources" : [
                 {
-                    "type": "dir",
-                    "path": "../"
+                    "type" : "dir",
+                    "path" : "../"
                 }
             ]
         }
