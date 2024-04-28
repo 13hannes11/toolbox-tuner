@@ -1,5 +1,4 @@
 use crate::gtk::Align;
-use crate::gtk::Spinner;
 use crate::util::toolbox::ToolbxContainer;
 use relm4::adw::prelude::PreferencesGroupExt;
 use relm4::factory::FactoryHashMap;
@@ -29,7 +28,7 @@ pub(super) struct App {
     unsupported_dialog: Controller<UnsupportedDialog>,
     about_dialog: Controller<AboutDialog>,
     containers: FactoryHashMap<String, Container>,
-    refresh_spinner: Spinner,
+    spinning: bool,
 }
 
 #[derive(Debug)]
@@ -113,9 +112,12 @@ impl Component for App {
                         set_margin_all: 30,
 
 
-                        set_header_suffix: Some(
-                            &model.refresh_spinner
-                        ),
+
+                        #[wrap(Some)]
+                        set_header_suffix: refresh_spinner  = &gtk::Spinner {
+                            #[watch]
+                            set_spinning: model.spinning
+                        },
 
                         #[local_ref]
                         container_box -> gtk::ListBox {
@@ -151,13 +153,11 @@ impl Component for App {
 
         let containers = FactoryHashMap::builder().launch_default().detach();
 
-        let refresh_spinner = gtk::Spinner::new();
-
         let model = Self {
             about_dialog,
             unsupported_dialog,
             containers,
-            refresh_spinner,
+            spinning: true,
         };
 
         let container_box = model.containers.widget();
@@ -212,7 +212,7 @@ impl Component for App {
 
             AppCommandMsg::PrerequisitsInstalled(true) | AppCommandMsg::InitiateRefresh => {
                 // TODO: start process of fetching toolboxes
-                self.refresh_spinner.set_spinning(true);
+                self.spinning = true;
                 sender.spawn_oneshot_command(|| {
                     AppCommandMsg::UpdateToolboxes(ToolbxContainer::get_toolboxes())
                 })
@@ -238,7 +238,7 @@ impl Component for App {
                     self.containers.remove(&hash);
                 });
 
-                self.refresh_spinner.set_spinning(false);
+                self.spinning = false;
 
                 sender.spawn_oneshot_command(|| {
                     sleep(Duration::from_millis(2000));
