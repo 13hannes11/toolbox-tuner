@@ -211,7 +211,6 @@ impl Component for App {
             }
 
             AppCommandMsg::PrerequisitsInstalled(true) | AppCommandMsg::InitiateRefresh => {
-                // TODO: start process of fetching toolboxes
                 self.spinning = true;
                 sender.spawn_oneshot_command(|| {
                     AppCommandMsg::UpdateToolboxes(ToolbxContainer::get_toolboxes())
