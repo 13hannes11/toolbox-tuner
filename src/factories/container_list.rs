@@ -8,9 +8,16 @@ use relm4::gtk::prelude::WidgetExt;
 use relm4_icons::icon_names;
 
 #[derive(Debug)]
+pub enum ContainerStatus {
+    Running,
+    NotRunning,
+}
+
+#[derive(Debug)]
 pub struct Container {
     hash: String,
     value: String,
+    status: ContainerStatus,
 }
 
 #[derive(Debug)]
@@ -22,6 +29,7 @@ pub enum ContainerMsg {
 
 pub struct ContainerInit {
     pub name: String,
+    pub status: ContainerStatus,
 }
 
 #[relm4::factory(pub)]
@@ -38,6 +46,7 @@ impl FactoryComponent for Container {
         root = adw::ActionRow {
             #[watch]
             set_title: &self.value,
+            #[watch]
             set_subtitle: &self.hash,
 
             add_prefix = &gtk::Box{
@@ -45,8 +54,11 @@ impl FactoryComponent for Container {
                     set_ratio: 1.0,
                     #[name(play_button)]
                     gtk::Button {
-                        // TODO: make component with state that either is waiting, play or pause
-                        set_icon_name: icon_names::PLAY,
+                        #[watch]
+                        set_icon_name: match &self.status {
+                            ContainerStatus::NotRunning => icon_names::PLAY,
+                            ContainerStatus::Running => icon_names::PAUSE,
+                        },
                         set_margin_top: 10,
                         set_margin_bottom: 10,
                         set_css_classes: &["circular"],
@@ -76,6 +88,7 @@ impl FactoryComponent for Container {
         Self {
             hash: index.clone(),
             value: value.name.clone(),
+            status: value.status,
         }
     }
 

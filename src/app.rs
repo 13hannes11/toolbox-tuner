@@ -13,16 +13,17 @@ use std::collections::HashSet;
 use std::thread::sleep;
 use std::time::Duration;
 
+use crate::config::{APP_ID, PROFILE};
+use crate::factories::container_list::Container;
+use crate::factories::container_list::ContainerStatus;
+use crate::modals::about::AboutDialog;
+use crate::modals::unsupported::UnsupportedDialog;
+use crate::modals::unsupported::UnsupportedDialogOutput;
+use crate::util::toolbox::ToolbxStatus;
 use gtk::prelude::{
     ApplicationExt, ApplicationWindowExt, GtkWindowExt, OrientableExt, SettingsExt, WidgetExt,
 };
 use gtk::{gio, glib};
-
-use crate::config::{APP_ID, PROFILE};
-use crate::factories::container_list::Container;
-use crate::modals::about::AboutDialog;
-use crate::modals::unsupported::UnsupportedDialog;
-use crate::modals::unsupported::UnsupportedDialogOutput;
 
 pub(super) struct App {
     unsupported_dialog: Controller<UnsupportedDialog>,
@@ -223,6 +224,10 @@ impl Component for App {
                         toolbox.id.clone(),
                         ContainerInit {
                             name: toolbox.name.clone(),
+                            status: match toolbox.status {
+                                ToolbxStatus::Running => ContainerStatus::Running,
+                                _ => ContainerStatus::NotRunning,
+                            },
                         },
                     );
                     updated_containers.insert(toolbox.id.clone());
