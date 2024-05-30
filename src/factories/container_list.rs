@@ -1,3 +1,5 @@
+use crate::util::toolbox::start_toolbox_container;
+use crate::util::toolbox::stop_toolbox_container;
 use gtk::prelude::ButtonExt;
 use relm4::adw;
 use relm4::adw::prelude::ActionRowExt;
@@ -6,11 +8,11 @@ use relm4::factory::{FactoryComponent, FactorySender};
 use relm4::gtk;
 use relm4::gtk::prelude::WidgetExt;
 use relm4_icons::icon_names;
-
 #[derive(Debug, PartialEq)]
 pub enum ContainerStatus {
     Running,
     NotRunning,
+    Refreshing,
 }
 
 #[derive(Debug)]
@@ -27,6 +29,12 @@ pub enum ContainerMsg {
     OpenTerminal,
 }
 
+#[derive(Debug)]
+pub enum CommandMessage {
+    SetStarted,
+    SetStopped,
+}
+
 pub struct ContainerInit {
     pub name: String,
     pub status: ContainerStatus,
@@ -37,7 +45,7 @@ impl FactoryComponent for Container {
     type Init = ContainerInit;
     type Input = ContainerMsg;
     type Output = ();
-    type CommandOutput = ();
+    type CommandOutput = CommandMessage;
     type Widgets = ContainerWidgets;
     type ParentWidget = gtk::ListBox;
     type Index = String;
@@ -53,6 +61,18 @@ impl FactoryComponent for Container {
                 gtk::AspectFrame{
                     set_ratio: 1.0,
                     gtk::Box{
+                        gtk::Button {
+                            #[watch]
+                            set_visible: self.status == ContainerStatus::Refreshing,
+                            #[wrap(Some)]
+                            set_child = &gtk::Spinner {
+                                #[watch]
+                                set_spinning: self.status == ContainerStatus::Refreshing,
+                            },
+                            set_margin_top: 10,
+                            set_margin_bottom: 10,
+                            set_css_classes: &["circular"],
+                        },
                         gtk::Button {
                             #[watch]
                             set_visible: self.status == ContainerStatus::NotRunning,
@@ -105,11 +125,32 @@ impl FactoryComponent for Container {
         }
     }
 
-    fn update(&mut self, msg: Self::Input, _sender: FactorySender<Self>) {
+    fn update(&mut self, msg: Self::Input, sender: FactorySender<Self>) {
         match msg {
-            ContainerMsg::Start => {}
-            ContainerMsg::Stop => {}
+            ContainerMsg::Start => {
+                self.status = ContainerStatus::Refreshing;
+                let hash = (&self.hash).clone();
+                sender.spawn_oneshot_command(move || match start_toolbox_container(&hash) {
+                    Ok(_) => CommandMessage::SetStarted,
+                    Err(_) => CommandMessage::SetStopped,
+                });
+            }
+            ContainerMsg::Stop => {
+                self.status = ContainerStatus::Refreshing;
+                let hash = (&self.hash).clone();
+                sender.spawn_oneshot_command(move || match stop_toolbox_container(&hash) {
+                    Ok(_) => CommandMessage::SetStopped,
+                    Err(_) => CommandMessage::SetStarted,
+                });
+            }
             ContainerMsg::OpenTerminal => {}
         }
+    }
+
+    fn update_cmd(&mut self, message: Self::CommandOutput, sender: FactorySender<Self>) {
+        match message {
+            CommandMessage::SetStarted => self.status = ContainerStatus::Running,
+            CommandMessage::SetStopped => self.status = ContainerStatus::NotRunning,
+        };
     }
 }

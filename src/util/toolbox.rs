@@ -147,71 +147,69 @@ impl ToolbxContainer {
         self.status = ToolbxStatus::from_str(inspect_result.state.status.as_str())?;
         Ok(())
     }
+}
 
-    pub fn stop(&mut self) -> Result<(), ToolbxError> {
-        let output = Command::new("flatpak-spawn")
-            .arg("--host") //Command::new("podman")
-            .arg("podman")
-            .arg("stop")
-            .arg(self.name.clone())
-            .output();
+pub fn stop_toolbox_container(hash: &str) -> Result<(), ToolbxError> {
+    let output = Command::new("flatpak-spawn")
+        .arg("--host") //Command::new("podman")
+        .arg("podman")
+        .arg("stop")
+        .arg(hash)
+        .output();
 
-        if output.is_err() {
-            return Err(ToolbxError::CommandExecutionError(
-                output.unwrap_err().to_string(),
-            ));
-        }
-        let output = output.unwrap();
-
-        // Success: Output { status: ExitStatus(unix_wait_status(0)), stdout: "tbx_name\n", stderr: "" }
-        //Fail:
-        // Output {
-        //     status: ExitStatus(unix_wait_status(32000)),
-        //     stdout: "",
-        //     stderr: "Error: no container with name or ID \"tbx_name\" found: no such container\n"
-        // }
-
-        if output.status.code() == Some(0) {
-            self.status = ToolbxStatus::Exited;
-            Ok(())
-        } else {
-            Err(ToolbxError::CommandUnsuccessfulError(
-                String::from_utf8_lossy(&output.stderr).into_owned(),
-            ))
-        }
+    if output.is_err() {
+        return Err(ToolbxError::CommandExecutionError(
+            output.unwrap_err().to_string(),
+        ));
     }
+    let output = output.unwrap();
 
-    pub fn start(&mut self) -> Result<(), ToolbxError> {
-        let output = Command::new("flatpak-spawn")
-            .arg("--host") //Command::new("podman")
-            .arg("podman")
-            .arg("start")
-            .arg(self.name.clone())
-            .output();
+    // Success: Output { status: ExitStatus(unix_wait_status(0)), stdout: "tbx_name\n", stderr: "" }
+    //Fail:
+    // Output {
+    //     status: ExitStatus(unix_wait_status(32000)),
+    //     stdout: "",
+    //     stderr: "Error: no container with name or ID \"tbx_name\" found: no such container\n"
+    // }
 
-        if output.is_err() {
-            return Err(ToolbxError::CommandExecutionError(
-                output.unwrap_err().to_string(),
-            ));
-        }
-        let output = output.unwrap();
+    if output.status.code() == Some(0) {
+        Ok(())
+    } else {
+        Err(ToolbxError::CommandUnsuccessfulError(
+            String::from_utf8_lossy(&output.stderr).into_owned(),
+        ))
+    }
+}
 
-        // Success: status: Output { ExitStatus(unix_wait_status(0)), stdout: "tbx_name\n", stderr: "" }
-        // Fail: status:
-        // Output {
-        //     status: ExitStatus(unix_wait_status(32000)),
-        //     stdout: "",
-        //     stderr: "Error: no container with name or ID \"tbx_name\" found: no such container\n"
-        // }
+pub fn start_toolbox_container(hash: &str) -> Result<(), ToolbxError> {
+    let output = Command::new("flatpak-spawn")
+        .arg("--host") //Command::new("podman")
+        .arg("podman")
+        .arg("start")
+        .arg(hash)
+        .output();
 
-        if output.status.code() == Some(0) {
-            self.status = ToolbxStatus::Running;
-            Ok(())
-        } else {
-            Err(ToolbxError::CommandUnsuccessfulError(
-                String::from_utf8_lossy(&output.stderr).into_owned(),
-            ))
-        }
+    if output.is_err() {
+        return Err(ToolbxError::CommandExecutionError(
+            output.unwrap_err().to_string(),
+        ));
+    }
+    let output = output.unwrap();
+
+    // Success: status: Output { ExitStatus(unix_wait_status(0)), stdout: "tbx_name\n", stderr: "" }
+    // Fail: status:
+    // Output {
+    //     status: ExitStatus(unix_wait_status(32000)),
+    //     stdout: "",
+    //     stderr: "Error: no container with name or ID \"tbx_name\" found: no such container\n"
+    // }
+
+    if output.status.code() == Some(0) {
+        Ok(())
+    } else {
+        Err(ToolbxError::CommandUnsuccessfulError(
+            String::from_utf8_lossy(&output.stderr).into_owned(),
+        ))
     }
 }
 
