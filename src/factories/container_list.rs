@@ -7,7 +7,7 @@ use relm4::gtk;
 use relm4::gtk::prelude::WidgetExt;
 use relm4_icons::icon_names;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub enum ContainerStatus {
     Running,
     NotRunning,
@@ -52,25 +52,38 @@ impl FactoryComponent for Container {
             add_prefix = &gtk::Box{
                 gtk::AspectFrame{
                     set_ratio: 1.0,
-                    #[name(play_button)]
-                    gtk::Button {
-                        #[watch]
-                        set_icon_name: match &self.status {
-                            ContainerStatus::NotRunning => icon_names::PLAY,
-                            ContainerStatus::Running => icon_names::PAUSE,
+                    gtk::Box{
+                        gtk::Button {
+                            #[watch]
+                            set_visible: self.status == ContainerStatus::NotRunning,
+                            set_icon_name: icon_names::PLAY,
+                            set_margin_top: 10,
+                            set_margin_bottom: 10,
+                            set_css_classes: &["circular"],
+                            connect_clicked => ContainerMsg::Start,
                         },
-                        set_margin_top: 10,
-                        set_margin_bottom: 10,
-                        set_css_classes: &["circular"],
-                        connect_clicked => ContainerMsg::Start,
+                        gtk::Button {
+                            #[watch]
+                            set_visible: self.status == ContainerStatus::Running,
+                            set_icon_name: icon_names::PAUSE,
+                            set_margin_top: 10,
+                            set_margin_bottom: 10,
+                            set_css_classes: &["circular"],
+                            connect_clicked => ContainerMsg::Stop,
+                        },
                     },
+                },
+            },
+            add_prefix = &gtk::Box{
+                gtk::AspectFrame{
+                    set_ratio: 1.0,
+
                 },
             },
 
             add_suffix = &gtk::Box{
                 gtk::AspectFrame{
                     set_ratio: 1.0,
-                    #[name(add_button)]
                     gtk::Button {
                         set_icon_name: icon_names::TERMINAL,
                         set_margin_start: 10,
