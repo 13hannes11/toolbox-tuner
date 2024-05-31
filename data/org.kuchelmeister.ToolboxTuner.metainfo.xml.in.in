@@ -4,24 +4,24 @@
   <id>@app-id@</id>
   <metadata_license>CC0</metadata_license>
   <project_license>GPL-3.0-or-later</project_license>
-  <name>Toolbx Tuner</name>
-  <summary>Manage and enhance your toolbxes (containertoolboxes)</summary>
+  <name>Toolbox Tuner</name>
+  <summary>Manage and enhance toolboxes (containertoolbx.org)</summary>
   <description>
     <p>An application to manage and enhance your containertoolboxes.</p>
   </description>
   <screenshots>
     <screenshot type="default">
       <caption>Main application window showing multiple toolboxes</caption>
-      <image type="source" width="1200" height="800">https://media.githubusercontent.com/media/13hannes11/toolbx-tuner/main/data/resources/screenshots/main_light.png</image>
+      <image type="source" width="1200" height="800">https://media.githubusercontent.com/media/13hannes11/toolbox-tuner/main/data/resources/screenshots/main_light.png</image>
     </screenshot>
     <screenshot>
       <caption>Main application window in dark mode</caption>
-      <image type="source" width="1200" height="800">https://media.githubusercontent.com/media/13hannes11/toolbx-tuner/main/data/resources/screenshots/main_dark.png</image>
+      <image type="source" width="1200" height="800">https://github.com/13hannes11/toolbox-tuner/blob/main/data/resources/screenshots/main_dark.png</image>
     </screenshot>
   </screenshots>
   <branding>
     <color type="primary" scheme_preference="light">#a3f6f1</color>
-    <color type="primary" scheme_preference="dark">#60ada6</color>
+    <color type="primary" scheme_preference="dark">#2a9f94</color>
   </branding>
   <content_rating type="oars-1.0"/>
   <releases>
