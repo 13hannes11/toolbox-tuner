@@ -12,11 +12,11 @@
   <screenshots>
     <screenshot type="default">
       <caption>Main application window showing multiple toolboxes</caption>
-      <image type="source" width="1200" height="800">https://media.githubusercontent.com/media/13hannes11/toolbox-tuner/main/data/resources/screenshots/main_light.png</image>
+      <image type="source" width="900" height="600">https://media.githubusercontent.com/media/13hannes11/toolbox-tuner/main/data/resources/screenshots/main_light.png</image>
     </screenshot>
     <screenshot>
       <caption>Main application window in dark mode</caption>
-      <image type="source" width="1200" height="800">https://github.com/13hannes11/toolbox-tuner/blob/main/data/resources/screenshots/main_dark.png</image>
+      <image type="source" width="900" height="600">https://github.com/13hannes11/toolbox-tuner/blob/main/data/resources/screenshots/main_dark.png</image>
     </screenshot>
   </screenshots>
   <branding>

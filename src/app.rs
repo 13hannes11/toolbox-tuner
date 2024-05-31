@@ -262,16 +262,22 @@ impl AppWidgets {
         let settings = gio::Settings::new(APP_ID);
         let (width, height) = self.main_window.default_size();
 
-        settings.set_int("window-width", width)?;
-        settings.set_int("window-height", height)?;
+        if PROFILE != "Screenshot" {
+            settings.set_int("window-width", width)?;
+            settings.set_int("window-height", height)?;
 
-        settings.set_boolean("is-maximized", self.main_window.is_maximized())?;
-
+            settings.set_boolean("is-maximized", self.main_window.is_maximized())?;
+        }
         Ok(())
     }
 
     fn load_window_size(&self) {
         let settings = gio::Settings::new(APP_ID);
+
+        if PROFILE == "Screenshot" {
+            self.main_window.set_default_size(778, 478);
+            return;
+        }
 
         let width = settings.int("window-width");
         let height = settings.int("window-height");

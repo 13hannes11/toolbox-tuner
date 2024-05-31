@@ -3,7 +3,8 @@ option(
   type: 'combo',
   choices: [
     'default',
-    'development'
+    'development',
+    'screenshot',
   ],
   value: 'default',
   description: 'The build profile for Toolbox Tuner. One of "default" or "development".'
