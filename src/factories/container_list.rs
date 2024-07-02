@@ -1,3 +1,4 @@
+use crate::util::toolbox::open_toolbox_container_in_terminal;
 use crate::util::toolbox::start_toolbox_container;
 use crate::util::toolbox::stop_toolbox_container;
 use gtk::prelude::ButtonExt;
@@ -8,6 +9,8 @@ use relm4::factory::{FactoryComponent, FactorySender};
 use relm4::gtk;
 use relm4::gtk::prelude::WidgetExt;
 use relm4_icons::icon_names;
+use std::collections::HashSet;
+
 #[derive(Debug, PartialEq)]
 pub enum ContainerStatus {
     Running,
@@ -15,11 +18,17 @@ pub enum ContainerStatus {
     Refreshing,
 }
 
+#[derive(Debug, PartialEq, Hash, Eq)]
+pub enum ContainerOperation {
+    LaunchingTerminal,
+}
+
 #[derive(Debug)]
 pub struct Container {
     hash: String,
     value: String,
     status: ContainerStatus,
+    running_operations: HashSet<ContainerOperation>,
 }
 
 #[derive(Debug)]
@@ -33,6 +42,7 @@ pub enum ContainerMsg {
 pub enum CommandMessage {
     SetStarted,
     SetStopped,
+    FinishLaunchTerminal,
 }
 
 pub struct ContainerInit {
@@ -103,6 +113,8 @@ impl FactoryComponent for Container {
 
             add_suffix = &gtk::Box{
                 gtk::AspectFrame{
+                    #[watch]
+                    set_visible: !self.running_operations.contains(&ContainerOperation::LaunchingTerminal),
                     set_ratio: 1.0,
                     gtk::Button {
                         set_icon_name: icon_names::TERMINAL,
@@ -111,6 +123,23 @@ impl FactoryComponent for Container {
                         set_margin_bottom: 10,
                         set_css_classes: &["flat"],
                         connect_clicked => ContainerMsg::OpenTerminal,
+                    },
+
+                },
+                gtk::AspectFrame{
+                    #[watch]
+                    set_visible: self.running_operations.contains(&ContainerOperation::LaunchingTerminal),
+                    set_ratio: 1.0,
+                    gtk::Button {
+                        set_margin_start: 10,
+                        set_margin_top: 10,
+                        set_margin_bottom: 10,
+                        set_css_classes: &["flat"],
+                        #[wrap(Some)]
+                        set_child = &gtk::Spinner {
+                            #[watch]
+                            set_spinning: self.running_operations.contains(&ContainerOperation::LaunchingTerminal),
+                        },
                     },
                 },
             },
@@ -122,6 +151,7 @@ impl FactoryComponent for Container {
             hash: index.clone(),
             value: value.name.clone(),
             status: value.status,
+            running_operations: HashSet::new(),
         }
     }
 
@@ -143,7 +173,16 @@ impl FactoryComponent for Container {
                     Err(_) => CommandMessage::SetStarted,
                 });
             }
-            ContainerMsg::OpenTerminal => {}
+            ContainerMsg::OpenTerminal => {
+                self.running_operations
+                    .insert(ContainerOperation::LaunchingTerminal);
+                let hash = (&self.hash).clone();
+                sender.spawn_oneshot_command(move || {
+                    match open_toolbox_container_in_terminal(&hash) {
+                        _ => CommandMessage::FinishLaunchTerminal,
+                    }
+                });
+            }
         }
     }
 
@@ -151,6 +190,10 @@ impl FactoryComponent for Container {
         match message {
             CommandMessage::SetStarted => self.status = ContainerStatus::Running,
             CommandMessage::SetStopped => self.status = ContainerStatus::NotRunning,
+            CommandMessage::FinishLaunchTerminal => {
+                self.running_operations
+                    .remove(&ContainerOperation::LaunchingTerminal);
+            }
         };
     }
 }

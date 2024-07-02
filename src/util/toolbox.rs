@@ -149,6 +149,31 @@ impl ToolbxContainer {
     }
 }
 
+pub fn open_toolbox_container_in_terminal(hash: &str) -> Result<(), ToolbxError> {
+    let output = Command::new("flatpak-spawn")
+        .arg("--host")
+        .arg("gnome-terminal")
+        .arg("--")
+        .arg("toolbox")
+        .arg("enter")
+        .arg(hash)
+        .output();
+
+    if output.is_err() {
+        return Err(ToolbxError::CommandExecutionError(
+            output.unwrap_err().to_string(),
+        ));
+    }
+    let output = output.unwrap();
+    if output.status.code() == Some(0) {
+        Ok(())
+    } else {
+        Err(ToolbxError::CommandUnsuccessfulError(
+            String::from_utf8_lossy(&output.stderr).into_owned(),
+        ))
+    }
+}
+
 pub fn stop_toolbox_container(hash: &str) -> Result<(), ToolbxError> {
     let output = Command::new("flatpak-spawn")
         .arg("--host") //Command::new("podman")
