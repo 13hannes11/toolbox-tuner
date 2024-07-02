@@ -186,7 +186,7 @@ impl FactoryComponent for Container {
         }
     }
 
-    fn update_cmd(&mut self, message: Self::CommandOutput, sender: FactorySender<Self>) {
+    fn update_cmd(&mut self, message: Self::CommandOutput, _sender: FactorySender<Self>) {
         match message {
             CommandMessage::SetStarted => self.status = ContainerStatus::Running,
             CommandMessage::SetStopped => self.status = ContainerStatus::NotRunning,
