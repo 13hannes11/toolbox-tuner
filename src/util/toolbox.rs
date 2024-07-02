@@ -1,4 +1,3 @@
-use serde::{Deserialize, Serialize};
 use std::{fmt::Display, process::Command, str::FromStr};
 
 #[derive(Debug, PartialEq)]
@@ -138,6 +137,7 @@ pub fn start_toolbox_container(hash: &str) -> Result<(), ToolbxError> {
         .output();
 
     if output.is_err() {
+        dbg!(&output);
         return Err(ToolbxError::CommandExecutionError(
             output.unwrap_err().to_string(),
         ));
@@ -155,6 +155,7 @@ pub fn start_toolbox_container(hash: &str) -> Result<(), ToolbxError> {
     if output.status.code() == Some(0) {
         Ok(())
     } else {
+        dbg!(&output);
         Err(ToolbxError::CommandUnsuccessfulError(
             String::from_utf8_lossy(&output.stderr).into_owned(),
         ))

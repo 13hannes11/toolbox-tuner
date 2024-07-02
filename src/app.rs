@@ -1,4 +1,7 @@
 use crate::gtk::Align;
+use crate::util::prerequisit::get_installed_terminals;
+use crate::util::prerequisit::is_toolbox_installed;
+
 use crate::util::toolbox::ToolbxContainer;
 use relm4::adw::prelude::PreferencesGroupExt;
 use relm4::factory::FactoryHashMap;
@@ -181,8 +184,9 @@ impl Component for App {
         };
 
         sender.spawn_oneshot_command(|| {
-            // TODO: actually check for compatibility
-            AppCommandMsg::PrerequisitsInstalled(true)
+            let terminals = get_installed_terminals().unwrap_or_default();
+            let toolbox_installed = is_toolbox_installed().unwrap_or(false);
+            AppCommandMsg::PrerequisitsInstalled(terminals.len() > 0 && toolbox_installed)
         });
 
         actions.add_action(shortcuts_action);
