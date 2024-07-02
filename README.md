@@ -1,24 +1,24 @@
 
-# Toolbx Tuner
+# Toolbox Tuner
 
-Toolbx Tuner is a tool to improve the experience with [toolbx](https://containertoolbx.org/).
+Toolbox Tuner is a tool to improve the experience with [toolbox](https://containertoolbx.org/).
 
-![image](https://media.githubusercontent.com/media/13hannes11/toolbx-tuner/main/data/resources/screenshots/main_light.png)
-![image](https://media.githubusercontent.com/media/13hannes11/toolbx-tuner/main/data/resources/screenshots/main_dark.png)
+![image](https://media.githubusercontent.com/media/13hannes11/toolbox-tuner/main/data/resources/screenshots/main_light.png)
+![image](https://media.githubusercontent.com/media/13hannes11/toolbox-tuner/main/data/resources/screenshots/main_dark.png)
 
 ## Project Roadmap
 
 The project is currently only an mvp that only is able to list toolboxes and launch a terminal inside of them.
 
 - [x] UI prototype
-- [x] [Continuous development releases](https://github.com/13hannes11/toolbx-tuner/releases/tag/dev)
+- [x] [Continuous development releases](https://github.com/13hannes11/toolbox-tuner/releases/tag/dev)
 - [x] Flatpak support
 - [ ] Publish on Flathub
 
 
 ## Installing the application
 
-The application as of now is only available as a development build. You can download it [here](https://github.com/13hannes11/toolbx-tuner/releases/tag/dev) but be aware of unfinished features and possible instabilities. 
+The application as of now is only available as a development build. You can download it [here](https://github.com/13hannes11/toolbox-tuner/releases/tag/dev) but be aware of unfinished features and possible instabilities.
 
 
 ## Compiling Source
@@ -33,9 +33,7 @@ This project now uses *Gnome Builder* as main build tool and the Flatpak toolcha
     2. `flatpak install org.gnome.Sdk`
     3. `flatpak install org.freedesktop.Sdk.Extension.rust-stable` 
 2. Compile with:
-    * Flatpak Builder by opening the project folder and pressing run or
-    * Run `build_install_local.sh`
-
+    * Flatpak Builder by opening the project folder and pressing run
 
 ### Traditional Compilation
 

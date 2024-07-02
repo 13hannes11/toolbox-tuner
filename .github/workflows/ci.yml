@@ -8,7 +8,7 @@ name: CI
 jobs:
   rustfmt:
     name: Rustfmt
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v2
         with:
@@ -26,9 +26,9 @@ jobs:
 
   flatpak:
     name: Flatpak
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     container:
-      image: bilelmoussaoui/flatpak-github-actions:gnome-42
+      image: bilelmoussaoui/flatpak-github-actions:gnome-45
       options: --privileged
     steps:
     - name: Install git-lfs
@@ -39,7 +39,7 @@ jobs:
     - uses: bilelmoussaoui/flatpak-github-actions/flatpak-builder@v4
       with:
         bundle: toolbxtuner.flatpak
-        manifest-path: build-aux/org.kuchelmeister.ToolbxTuner.Devel.json
+        manifest-path: build-aux/org.kuchelmeister.ToolboxTuner.Devel.json
         run-tests: true
         cache-key: flatpak-builder-${{ github.sha }}
     - name: ls
