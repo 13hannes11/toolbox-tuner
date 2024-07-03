@@ -8,16 +8,14 @@ name: CI
 jobs:
   rustfmt:
     name: Rustfmt
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
         with:
           lfs: true
-      - uses: actions-rs/toolchain@v1
+      - uses: dtolnay/rust-toolchain@stable
         with:
-          profile: minimal
           toolchain: stable
-          override: true
           components: rustfmt
       - name: Create blank versions of configured file
         run: echo -e "" >> src/config.rs
@@ -26,13 +24,13 @@ jobs:
 
   flatpak:
     name: Flatpak
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
     container:
       image: bilelmoussaoui/flatpak-github-actions:gnome-45
       options: --privileged
     steps:
-    - name: Install git-lfs
-      run: dnf update -y && dnf install -y git-lfs
+    - name: Install pre-requisits
+      run: dnf update -y && dnf install -y git-lfs cargo
     - uses: actions/checkout@v2
       with:
         lfs: true
@@ -42,6 +40,8 @@ jobs:
         manifest-path: build-aux/org.kuchelmeister.ToolboxTuner.Devel.json
         run-tests: true
         cache-key: flatpak-builder-${{ github.sha }}
+    - name: Vendor dependencies
+      run: ./build-aux/dist-vendor.sh dist .
     - name: ls
       run: ls
   publish-prerelease:
@@ -60,3 +60,4 @@ jobs:
         title: 'Latest Development Build'
         files: |
           **/*.flatpak
+
