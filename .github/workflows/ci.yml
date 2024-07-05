@@ -31,10 +31,10 @@ jobs:
     steps:
     - name: Install pre-requisits
       run: dnf update -y && dnf install -y git-lfs cargo
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4
       with:
         lfs: true
-    - uses: bilelmoussaoui/flatpak-github-actions/flatpak-builder@v4
+    - uses: bilelmoussaoui/flatpak-github-actions/flatpak-builder@v6
       with:
         bundle: toolbxtuner.flatpak
         manifest-path: build-aux/org.kuchelmeister.ToolboxTuner.Devel.json
@@ -53,10 +53,10 @@ jobs:
     runs-on: ubuntu-latest
     if: startsWith(github.ref_name, 'main') && github.ref_type == 'branch'
     steps:
-    - uses: actions/download-artifact@v2
+    - uses: actions/download-artifact@v4
     - name: Show files
       run: ls
-    - uses: "marvinpinto/action-automatic-releases@v1.2.1"
+    - uses: "dciborow/action-automatic-releases-2@v1.0.0"
       with:
         repo_token: "${{ secrets.GITHUB_TOKEN }}"
         prerelease: true
@@ -64,4 +64,5 @@ jobs:
         title: 'Latest Development Build'
         files: |
           **/*.flatpak
+          **
 
