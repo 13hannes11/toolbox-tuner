@@ -1,6 +1,7 @@
 on:
   push:
     branches:
+      = *
   pull_request:
 
 name: CI
@@ -26,7 +27,7 @@ jobs:
     name: Flatpak
     runs-on: ubuntu-latest
     container:
-      image: bilelmoussaoui/flatpak-github-actions:gnome-45
+      image: bilelmoussaoui/flatpak-github-actions:gnome-46
       options: --privileged
     steps:
     - name: Install pre-requisits
@@ -44,7 +45,7 @@ jobs:
       run: ./build-aux/dist-vendor.sh dist .
     - uses: actions/upload-artifact@v4
       with:
-        name: offline
+        name: vendor
         path: dist
     - name: ls
       run: ls
@@ -64,4 +65,5 @@ jobs:
         title: 'Latest Development Build'
         files: |
           **/*.flatpak
+          vendor
 
