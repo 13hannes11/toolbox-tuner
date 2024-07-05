@@ -35,7 +35,7 @@ jobs:
         lfs: true
     - uses: bilelmoussaoui/flatpak-github-actions/flatpak-builder@v6
       with:
-        bundle: toolbxtuner.flatpak
+        bundle: toolboxtuner.flatpak
         manifest-path: build-aux/org.kuchelmeister.ToolboxTuner.Devel.json
         run-tests: true
         cache-key: flatpak-builder-${{ github.sha }}
@@ -54,7 +54,12 @@ jobs:
     steps:
     - uses: actions/download-artifact@v4
       with:
-        path: artifacts
+        path: vendor
+        merge-multiple: true
+    - uses: actions/download-artifact@v4
+      with:
+        path: flatpak
+        pattern: toolboxtuner*
         merge-multiple: true
     - name: Show files
       run: ls -R
