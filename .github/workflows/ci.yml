@@ -56,7 +56,7 @@ jobs:
     - uses: actions/download-artifact@v4
     - name: Show files
       run: ls
-    - uses: "dciborow/action-automatic-releases-2@v1.0.0"
+    - uses: "dciborow/action-github-releases@v1.0.1"
       with:
         repo_token: "${{ secrets.GITHUB_TOKEN }}"
         prerelease: true
@@ -64,5 +64,4 @@ jobs:
         title: 'Latest Development Build'
         files: |
           **/*.flatpak
-          **
 
