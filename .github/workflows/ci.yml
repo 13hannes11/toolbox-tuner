@@ -42,6 +42,10 @@ jobs:
         cache-key: flatpak-builder-${{ github.sha }}
     - name: Vendor dependencies
       run: ./build-aux/dist-vendor.sh dist .
+    - uses: actions/upload-artifact@v4
+      with:
+        name: offline
+        path: dist
     - name: ls
       run: ls
   publish-prerelease:
