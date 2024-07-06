@@ -43,8 +43,9 @@ jobs:
       run: ./build-aux/dist-vendor.sh dist . && tar czf vendor.tar.gz dist
     - uses: actions/upload-artifact@v4
       with:
-        name: vendor
-        path: vendor.tar.gz
+        path: |
+          *.tar.gz
+          *.flatpak
     - name: ls
       run: ls
   publish-prerelease:
@@ -53,14 +54,6 @@ jobs:
     if: startsWith(github.ref_name, 'main') && github.ref_type == 'branch'
     steps:
     - uses: actions/download-artifact@v4
-      with:
-        path: vendor
-        merge-multiple: true
-    - uses: actions/download-artifact@v4
-      with:
-        path: flatpak
-        pattern: toolboxtuner*
-        merge-multiple: true
     - name: Show files
       run: ls -R
     - uses: "dciborow/action-github-releases@v1.0.1"
