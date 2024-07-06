@@ -39,6 +39,7 @@ jobs:
         manifest-path: build-aux/org.kuchelmeister.ToolboxTuner.Devel.json
         run-tests: true
         cache-key: flatpak-builder-${{ github.sha }}
+        upload-artifact: false
     - name: Vendor dependencies
       run: ./build-aux/dist-vendor.sh dist . && tar czf vendor.tar.gz dist
     - uses: actions/upload-artifact@v4
