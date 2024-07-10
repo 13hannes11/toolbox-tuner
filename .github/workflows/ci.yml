@@ -46,6 +46,9 @@ jobs:
     name: vendor
     runs-on: ubuntu-latest
     steps:
+    - uses: actions/checkout@v4
+      with:
+        lfs: true
     - uses: dtolnay/rust-toolchain@stable
     - run: ./build-aux/dist-vendor.sh dist . && tar czf vendor.tar.gz dist
     - run:  sha256sum vendor.tar.gz > vendor.tar.gz.sha256sum
