@@ -28,8 +28,6 @@ jobs:
       image: bilelmoussaoui/flatpak-github-actions:gnome-46
       options: --privileged
     steps:
-    - name: Install pre-requisits
-      run: dnf update -y && dnf install -y git-lfs cargo
     - uses: actions/checkout@v4
       with:
         lfs: true
