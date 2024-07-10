@@ -1,26 +1,12 @@
+---
+name: "tagged-release"
+
 on:
   push:
-  pull_request:
-
-name: CI
+    tags:
+      - "v[0-9]+.0-9]+.0-9]+"
 
 jobs:
-  rustfmt:
-    name: Rustfmt
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          lfs: true
-      - uses: dtolnay/rust-toolchain@stable
-        with:
-          toolchain: stable
-          components: rustfmt
-      - name: Create blank versions of configured file
-        run: echo -e "" >> src/config.rs
-      - name: Run cargo fmt
-        run: cargo fmt --all -- --check
-
   flatpak:
     name: Flatpak
     runs-on: ubuntu-latest
@@ -36,13 +22,13 @@ jobs:
     - uses: bilelmoussaoui/flatpak-github-actions/flatpak-builder@v6
       with:
         bundle: toolboxtuner.flatpak
-        manifest-path: build-aux/org.kuchelmeister.ToolboxTuner.Devel.json
+        manifest-path: build-aux/org.kuchelmeister.ToolboxTuner.json
         run-tests: true
         cache-key: flatpak-builder-${{ github.sha }}
         upload-artifact: false
-    - name: Checksum for vendored dependencies
-      run: ./build-aux/dist-vendor.sh dist . && tar czf vendor.tar.gz dist
     - name: Vendor dependencies
+      run: ./build-aux/dist-vendor.sh dist . && tar czf vendor.tar.gz dist
+    - name: Checksum for vendored dependencies
       run:  sha256sum vendor.tar.gz > vendor.tar.gz.sha256sum
     - uses: actions/upload-artifact@v4
       with:
@@ -55,7 +41,6 @@ jobs:
   publish-prerelease:
     needs: [flatpak]
     runs-on: ubuntu-latest
-    if: startsWith(github.ref_name, 'main') && github.ref_type == 'branch'
     steps:
     - uses: actions/download-artifact@v4
     - name: Show files
@@ -63,9 +48,7 @@ jobs:
     - uses: "dciborow/action-github-releases@v1.0.1"
       with:
         repo_token: "${{ secrets.GITHUB_TOKEN }}"
-        prerelease: true
-        automatic_release_tag: dev
-        title: 'Latest Development Build'
+        prerelease: false
         files: |
           **/*.flatpak
           **/*.tar.gz

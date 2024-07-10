@@ -25,6 +25,13 @@
   </branding>
   <content_rating type="oars-1.0"/>
   <releases>
+    <release version="0.1.0" type="development" date="2024-07-10">
+      <description>
+        Initial release with the following features.
+        <p>Start/Stop toolboxes</p>
+        <p>Open terminal inside toolboxes</p>
+      </description>
+    </release>
     <release version="0.0.0" type="development" date="2022-04-18"/>
   </releases>
   <url type="homepage">https://github.com/13hannes11/toolbx-tuner</url>

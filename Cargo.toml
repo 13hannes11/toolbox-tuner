@@ -1,6 +1,6 @@
 [package]
 name = "toolbox-tuner"
-version = "0.0.1"
+version = "0.1.0"
 authors = ["Hannes Kuchelmeister <hannes@kuchelmeister.org>"]
 edition = "2021"
 publish = false
