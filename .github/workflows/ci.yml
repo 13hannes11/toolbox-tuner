@@ -38,6 +38,7 @@ jobs:
         run-tests: true
         cache-key: flatpak-builder-${{ github.sha }}
         upload-artifact: false
+    - uses: dtolnay/rust-toolchain@stable
     - name: Checksum for vendored dependencies
       run: ./build-aux/dist-vendor.sh dist . && tar czf vendor.tar.gz dist
     - name: Vendor dependencies
