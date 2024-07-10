@@ -22,7 +22,7 @@ jobs:
         run: cargo fmt --all -- --check
 
   flatpak:
-    name: Flatpak
+    name: Flatpak-prerelease
     runs-on: ubuntu-latest
     container:
       image: bilelmoussaoui/flatpak-github-actions:gnome-46
@@ -31,7 +31,7 @@ jobs:
     - uses: actions/checkout@v4
       with:
         lfs: true
-    - uses: bilelmoussaoui/flatpak-github-actions/flatpak-builder@v6
+    - uses: bilelmoussaoui/flatpak-github-actions/flatpak-builder@v6.3
       with:
         bundle: toolboxtuner.flatpak
         manifest-path: build-aux/org.kuchelmeister.ToolboxTuner.Devel.json
@@ -44,7 +44,7 @@ jobs:
         path: |
           *.flatpak
   vendor:
-    name: vendor
+    name: vendor-prerelease
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
@@ -60,6 +60,7 @@ jobs:
           *.tar.gz
           *.sha256sum
   publish-prerelease:
+    name: publish-prerelease
     needs: [flatpak, vendor]
     runs-on: ubuntu-latest
     if: startsWith(github.ref_name, 'main') && github.ref_type == 'branch'
