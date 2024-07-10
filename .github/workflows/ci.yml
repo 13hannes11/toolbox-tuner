@@ -38,21 +38,24 @@ jobs:
         run-tests: true
         cache-key: flatpak-builder-${{ github.sha }}
         upload-artifact: false
+    - uses: actions/upload-artifact@v4
+      with:
+        path: |
+          *.flatpak
+  vendor:
+    name: vendor
+    runs-on: ubuntu-latest
+    steps:
     - uses: dtolnay/rust-toolchain@stable
-    - name: Checksum for vendored dependencies
-      run: ./build-aux/dist-vendor.sh dist . && tar czf vendor.tar.gz dist
-    - name: Vendor dependencies
-      run:  sha256sum vendor.tar.gz > vendor.tar.gz.sha256sum
+    - run: ./build-aux/dist-vendor.sh dist . && tar czf vendor.tar.gz dist
+    - run:  sha256sum vendor.tar.gz > vendor.tar.gz.sha256sum
     - uses: actions/upload-artifact@v4
       with:
         path: |
           *.tar.gz
-          *.flatpak
           *.sha256sum
-    - name: ls
-      run: ls
   publish-prerelease:
-    needs: [flatpak]
+    needs: [flatpak, vendor]
     runs-on: ubuntu-latest
     if: startsWith(github.ref_name, 'main') && github.ref_type == 'branch'
     steps:
