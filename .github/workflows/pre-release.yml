@@ -18,7 +18,7 @@ jobs:
         target: [ToolboxTuner, ToolboxTuner.Devel, ToolboxTuner.Screenshot]
         arch: [x86_64, aarch64]
         # Don't fail the whole workflow if one architecture fails
-        fail-fast: false
+      fail-fast: false
     steps:
     - uses: actions/checkout@v4
       with:
