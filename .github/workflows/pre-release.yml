@@ -7,70 +7,47 @@ on:
 name: build-and-prerelease
 
 jobs:
-  flatpak-release-target:
-    name: build-flatpak-release-target
+  flatpak:
+    name: "Flatpak"
     runs-on: ubuntu-latest
     container:
       image: bilelmoussaoui/flatpak-github-actions:gnome-46
       options: --privileged
+    strategy:
+      matrix:
+        target: [ToolboxTuner, ToolboxTuner.Devel, ToolboxTuner.Screenshot]
+        arch: [x86_64]
+        include:
+        - target: ToolboxTuner.Devel
+          arch: aarch64
+        # Don't fail the whole workflow if one architecture fails
+      fail-fast: false
     steps:
     - uses: actions/checkout@v4
       with:
         lfs: true
+    # Docker is required by the docker/setup-qemu-action which enables emulation
+    - name: Install deps
+      if: ${{ matrix.arch != 'x86_64' }}
+      run: |
+        dnf -y install docker
+    - name: Set up QEMU
+      if: ${{ matrix.arch != 'x86_64' }}
+      id: qemu
+      uses: docker/setup-qemu-action@v2
+      with:
+        platforms: arm64
     - uses: bilelmoussaoui/flatpak-github-actions/flatpak-builder@v6.3
       with:
-        bundle: toolboxtuner-release.flatpak
-        manifest-path: build-aux/org.kuchelmeister.ToolboxTuner.json
+        bundle: ${{ matrix.target }}.${{ matrix.arch }}.flatpak
+        manifest-path: build-aux/org.kuchelmeister.${{ matrix.target }}.json
         run-tests: true
-        cache-key: flatpak-builder-release-${{ github.sha }}
+        cache-key: flatpak-builder-${{ github.sha }}
         upload-artifact: false
+        arch: ${{ matrix.arch }}
     - uses: actions/upload-artifact@v4
       with:
-        name: flatpak-release
-        path: |
-          *.flatpak
-  flatpak-screenshot-target:
-    name: build-flatpak-screenshot-target
-    runs-on: ubuntu-latest
-    container:
-      image: bilelmoussaoui/flatpak-github-actions:gnome-46
-      options: --privileged
-    steps:
-    - uses: actions/checkout@v4
-      with:
-        lfs: true
-    - uses: bilelmoussaoui/flatpak-github-actions/flatpak-builder@v6.3
-      with:
-        bundle: toolboxtuner-screenshot.flatpak
-        manifest-path: build-aux/org.kuchelmeister.ToolboxTuner.Screenshot.json
-        run-tests: true
-        cache-key: flatpak-builder-screenshot-${{ github.sha }}
-        upload-artifact: false
-    - uses: actions/upload-artifact@v4
-      with:
-        name: flatpak-screenshot
-        path: |
-          *.flatpak
-  flatpak-dev-target:
-    name: build-flatpak-dev-target
-    runs-on: ubuntu-latest
-    container:
-      image: bilelmoussaoui/flatpak-github-actions:gnome-46
-      options: --privileged
-    steps:
-    - uses: actions/checkout@v4
-      with:
-        lfs: true
-    - uses: bilelmoussaoui/flatpak-github-actions/flatpak-builder@v6.3
-      with:
-        bundle: toolboxtuner-dev.flatpak
-        manifest-path: build-aux/org.kuchelmeister.ToolboxTuner.Devel.json
-        run-tests: true
-        cache-key: flatpak-builder-dev-${{ github.sha }}
-        upload-artifact: false
-    - uses: actions/upload-artifact@v4
-      with:
-        name: flatpak-dev
+        name: flatpak-release-${{ matrix.target }}-${{ matrix.arch }}
         path: |
           *.flatpak
   vendor:
@@ -91,7 +68,7 @@ jobs:
           *.sha256sum
   publish-prerelease:
     name: publish-prerelease
-    needs: [flatpak-dev-target, vendor]
+    needs: [flatpak, vendor]
     runs-on: ubuntu-latest
     if: startsWith(github.ref_name, 'main') && github.ref_type == 'branch'
     steps:
@@ -105,7 +82,7 @@ jobs:
         automatic_release_tag: dev
         title: 'Latest Development Build'
         files: |
-          **/*-dev.flatpak
+          **/*.Devel.*.flatpak
           **/*.tar.gz
           **/*.sha256sum
 
