@@ -20,6 +20,7 @@ use crate::config::{APP_ID, PROFILE};
 use crate::factories::container_list::Container;
 use crate::factories::container_list::ContainerStatus;
 use crate::modals::about::AboutDialog;
+use crate::modals::settings::SettingsDialog;
 use crate::modals::unsupported::UnsupportedDialog;
 use crate::modals::unsupported::UnsupportedDialogOutput;
 use crate::util::toolbox::ToolbxStatus;
@@ -29,6 +30,7 @@ use gtk::prelude::{
 use gtk::{gio, glib};
 
 pub(super) struct App {
+    settings_dialog: Controller<SettingsDialog>,
     unsupported_dialog: Controller<UnsupportedDialog>,
     about_dialog: Controller<AboutDialog>,
     containers: FactoryHashMap<String, Container>,
@@ -48,7 +50,7 @@ pub(super) enum AppCommandMsg {
 }
 
 relm4::new_action_group!(pub(super) WindowActionGroup, "win");
-//relm4::new_stateless_action!(PreferencesAction, WindowActionGroup, "preferences");
+relm4::new_stateless_action!(PreferencesAction, WindowActionGroup, "preferences");
 relm4::new_stateless_action!(pub(super) ShortcutsAction, WindowActionGroup, "show-help-overlay");
 relm4::new_stateless_action!(AboutAction, WindowActionGroup, "about");
 use crate::factories::container_list::ContainerInit;
@@ -64,7 +66,7 @@ impl Component for App {
     menu! {
         primary_menu: {
             section! {
-                //"_Preferences" => PreferencesAction,
+                "_Preferences" => PreferencesAction,
                 "_Keyboard" => ShortcutsAction,
                 "_About Toolbox Tuner" => AboutAction,
             }
@@ -148,6 +150,11 @@ impl Component for App {
             .launch(())
             .detach();
 
+        let settings_dialog = SettingsDialog::builder()
+            .transient_for(&root)
+            .launch(())
+            .detach();
+
         let unsupported_dialog = UnsupportedDialog::builder()
             .transient_for(&root)
             .launch(())
@@ -158,6 +165,7 @@ impl Component for App {
         let containers = FactoryHashMap::builder().launch_default().detach();
 
         let model = Self {
+            settings_dialog,
             about_dialog,
             unsupported_dialog,
             containers,
@@ -168,6 +176,13 @@ impl Component for App {
         let widgets = view_output!();
 
         let mut actions = RelmActionGroup::<WindowActionGroup>::new();
+
+        let preference_action = {
+            let settings = model.settings_dialog.sender().clone();
+            RelmAction::<PreferencesAction>::new_stateless(move |_| {
+                settings.send(()).unwrap();
+            })
+        };
 
         let shortcuts_action = {
             let shortcuts = widgets.shortcuts.clone();
@@ -189,6 +204,7 @@ impl Component for App {
             AppCommandMsg::PrerequisitsInstalled(terminals.len() > 0 && toolbox_installed)
         });
 
+        actions.add_action(preference_action);
         actions.add_action(shortcuts_action);
         actions.add_action(about_action);
         actions.register_for_widget(&widgets.main_window);
