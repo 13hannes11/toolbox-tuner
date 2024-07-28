@@ -1,11 +1,14 @@
+use crate::util::prerequisit::get_installed_terminals;
 use relm4::adw::prelude::{
     ComboRowExt, PreferencesGroupExt, PreferencesPageExt, PreferencesRowExt, PreferencesWindowExt,
 };
 use relm4::gtk::prelude::GtkWindowExt;
 use relm4::view;
 use relm4::{adw, gtk, ComponentParts, ComponentSender, SimpleComponent};
-
 pub struct SettingsDialog {}
+use crate::APP_ID;
+use gtk::gio;
+use relm4::gtk::prelude::SettingsExt;
 
 impl SimpleComponent for SettingsDialog {
     type Init = ();
@@ -29,11 +32,24 @@ impl SimpleComponent for SettingsDialog {
         let sort_function = |to_insert: &gtk::glib::Object,
                              existing: &gtk::glib::Object|
          -> std::cmp::Ordering { to_insert.cmp(existing) };
-        terminal_selection_model.insert_sorted(&gtk::StringObject::new("Test"), &sort_function);
-        terminal_selection_model.insert_sorted(&gtk::StringObject::new("Test2"), &sort_function);
-        terminal_selection_model.insert_sorted(&gtk::StringObject::new("Test3"), &sort_function);
 
-        let terminal_selection = 2;
+        let terminals = get_installed_terminals().unwrap_or_default();
+
+        terminals.iter().for_each(|t| {
+            terminal_selection_model.insert_sorted(
+                &gtk::StringObject::new(format!("{:?}", t).as_str()),
+                &sort_function,
+            );
+        });
+
+        let settings = gio::Settings::new(APP_ID);
+        let terminal = settings.string("terminal");
+
+        let terminal_selection = terminal_selection_model
+            .find_with_equal_func(|obj| obj == &gtk::StringObject::new(terminal.as_str()))
+            .unwrap_or(0);
+
+        // TODO: save settings on drop down change
 
         view! {
             widgets = root.clone() {

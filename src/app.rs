@@ -210,7 +210,6 @@ impl Component for App {
         actions.register_for_widget(&widgets.main_window);
 
         widgets.load_window_size();
-
         ComponentParts { model, widgets }
     }
 
