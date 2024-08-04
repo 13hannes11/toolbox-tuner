@@ -1,8 +1,10 @@
 use crate::util::toolbox::ToolbxError;
 use std::process::Command;
 
+#[derive(Debug)]
 pub enum TerminalType {
     GnomeTerminal,
+    Konsole,
 }
 
 pub fn get_installed_terminals() -> Result<Vec<TerminalType>, ToolbxError> {
@@ -20,7 +22,7 @@ pub fn get_installed_terminals() -> Result<Vec<TerminalType>, ToolbxError> {
     let output = output.unwrap();
 
     if output.status.code() == Some(0) {
-        Ok(vec![TerminalType::GnomeTerminal])
+        Ok(vec![TerminalType::GnomeTerminal, TerminalType::Konsole])
     } else {
         Err(ToolbxError::CommandUnsuccessfulError(
             String::from_utf8_lossy(&output.stderr).into_owned(),

@@ -2,6 +2,7 @@ use crate::gtk::Align;
 use crate::util::prerequisit::get_installed_terminals;
 use crate::util::prerequisit::is_toolbox_installed;
 
+use crate::modals::settings::SettingsMsg;
 use crate::util::toolbox::ToolbxContainer;
 use relm4::adw::prelude::PreferencesGroupExt;
 use relm4::factory::FactoryHashMap;
@@ -180,7 +181,7 @@ impl Component for App {
         let preference_action = {
             let settings = model.settings_dialog.sender().clone();
             RelmAction::<PreferencesAction>::new_stateless(move |_| {
-                settings.send(()).unwrap();
+                settings.send(SettingsMsg::OpenSettings).unwrap();
             })
         };
 

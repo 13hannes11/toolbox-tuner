@@ -2,18 +2,30 @@ use crate::util::prerequisit::get_installed_terminals;
 use relm4::adw::prelude::{
     ComboRowExt, PreferencesGroupExt, PreferencesPageExt, PreferencesRowExt, PreferencesWindowExt,
 };
+use relm4::gtk::prelude::WidgetExt;
 use relm4::gtk::prelude::GtkWindowExt;
+use relm4::gtk::prelude::ListModelExt;
 use relm4::view;
 use relm4::{adw, gtk, ComponentParts, ComponentSender, SimpleComponent};
-pub struct SettingsDialog {}
+pub struct SettingsDialog {
+    hidden: bool,
+    terminal: String,
+}
 use crate::APP_ID;
 use gtk::gio;
+use relm4::gtk::prelude::CastNone;
 use relm4::gtk::prelude::SettingsExt;
+
+#[derive(Debug)]
+pub enum SettingsMsg {
+    OpenSettings,
+    TerminalSelectionChanged(String),
+}
 
 impl SimpleComponent for SettingsDialog {
     type Init = ();
     type Widgets = adw::PreferencesWindow;
-    type Input = ();
+    type Input = SettingsMsg;
     type Output = ();
     type Root = adw::PreferencesWindow;
 
@@ -24,9 +36,12 @@ impl SimpleComponent for SettingsDialog {
     fn init(
         _: Self::Init,
         root: Self::Root,
-        _sender: ComponentSender<Self>,
+        sender: ComponentSender<Self>,
     ) -> ComponentParts<Self> {
-        let model = Self {};
+        let model = Self {
+            hidden: true,
+            terminal: "".to_string(),
+        };
         let terminal_selection_model = gtk::gio::ListStore::new::<gtk::StringObject>();
 
         let sort_function = |to_insert: &gtk::glib::Object,
@@ -49,10 +64,16 @@ impl SimpleComponent for SettingsDialog {
             .find_with_equal_func(|obj| obj == &gtk::StringObject::new(terminal.as_str()))
             .unwrap_or(0);
 
-        // TODO: save settings on drop down change
+        let str_object: String = terminal_selection_model
+            .item(terminal_selection)
+            .and_downcast::<gtk::StringObject>()
+            .expect("The item has to be an `StringObject`.")
+            .into();
+        sender.input(SettingsMsg::TerminalSelectionChanged(str_object));
 
         view! {
             widgets = root.clone() {
+
                 add = &adw::PreferencesPage::new() {
                     add = &adw::PreferencesGroup::new() {
                     set_title: "Terminal settings",
@@ -62,6 +83,10 @@ impl SimpleComponent for SettingsDialog {
                             set_model = &gtk::SingleSelection::new(Some(terminal_selection_model)),
                             #[watch]
                             set_selected: terminal_selection,
+                            connect_selected_item_notify[sender] => move |combo_row| {
+                                let str_object: String = combo_row.selected_item().and_downcast::<gtk::StringObject>().expect("The item has to be an `StringObject`.").into();
+                                sender.input(SettingsMsg::TerminalSelectionChanged(str_object));
+                            },
                         },
                     },
                 },
@@ -71,6 +96,15 @@ impl SimpleComponent for SettingsDialog {
     }
 
     fn update_view(&self, dialog: &mut Self::Widgets, _sender: ComponentSender<Self>) {
-        dialog.present();
+        dialog.show();
+    }
+    fn update(&mut self, msg: Self::Input, _sender: ComponentSender<Self>) {
+        match msg {
+            SettingsMsg::OpenSettings => {    }
+            SettingsMsg::TerminalSelectionChanged(terminal) => {
+                let settings = gio::Settings::new(APP_ID);
+                settings.set_string("terminal", &terminal);
+            }
+        }
     }
 }
