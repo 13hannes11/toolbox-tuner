@@ -2,9 +2,10 @@ use crate::util::prerequisit::get_installed_terminals;
 use relm4::adw::prelude::{
     ComboRowExt, PreferencesGroupExt, PreferencesPageExt, PreferencesRowExt, PreferencesWindowExt,
 };
-use relm4::gtk::prelude::WidgetExt;
+use relm4::gtk::prelude::Cast;
 use relm4::gtk::prelude::GtkWindowExt;
 use relm4::gtk::prelude::ListModelExt;
+use relm4::gtk::prelude::WidgetExt;
 use relm4::view;
 use relm4::{adw, gtk, ComponentParts, ComponentSender, SimpleComponent};
 pub struct SettingsDialog {
@@ -59,10 +60,16 @@ impl SimpleComponent for SettingsDialog {
 
         let settings = gio::Settings::new(APP_ID);
         let terminal = settings.string("terminal");
+        println!("{}", terminal);
 
         let terminal_selection = terminal_selection_model
-            .find_with_equal_func(|obj| obj == &gtk::StringObject::new(terminal.as_str()))
+            .find_with_equal_func(|obj| {
+                gtk::StringObject::new(terminal.as_str()).string()
+                    == obj.downcast_ref::<gtk::StringObject>().unwrap().string()
+            })
             .unwrap_or(0);
+
+        println!("{}", terminal_selection);
 
         let str_object: String = terminal_selection_model
             .item(terminal_selection)
@@ -100,7 +107,7 @@ impl SimpleComponent for SettingsDialog {
     }
     fn update(&mut self, msg: Self::Input, _sender: ComponentSender<Self>) {
         match msg {
-            SettingsMsg::OpenSettings => {    }
+            SettingsMsg::OpenSettings => {}
             SettingsMsg::TerminalSelectionChanged(terminal) => {
                 let settings = gio::Settings::new(APP_ID);
                 settings.set_string("terminal", &terminal);
