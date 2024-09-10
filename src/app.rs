@@ -1,6 +1,6 @@
 use crate::gtk::Align;
-use crate::util::prerequisit::get_installed_terminals;
 use crate::util::prerequisit::is_toolbox_installed;
+use crate::util::terminal::get_installed_terminals;
 
 use crate::modals::settings::SettingsMsg;
 use crate::util::toolbox::ToolbxContainer;

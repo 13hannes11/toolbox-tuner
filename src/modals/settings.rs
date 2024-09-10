@@ -1,7 +1,11 @@
-use crate::util::prerequisit::get_installed_terminals;
+use crate::util::terminal::get_installed_terminals;
+use crate::util::terminal::TerminalType;
 use relm4::adw::prelude::{
     ComboRowExt, PreferencesGroupExt, PreferencesPageExt, PreferencesRowExt, PreferencesWindowExt,
 };
+
+use crate::util::settings::get_terminal;
+use crate::util::settings::set_terminal;
 use relm4::gtk::prelude::Cast;
 use relm4::gtk::prelude::GtkWindowExt;
 use relm4::gtk::prelude::ListModelExt;
@@ -58,8 +62,7 @@ impl SimpleComponent for SettingsDialog {
             );
         });
 
-        let settings = gio::Settings::new(APP_ID);
-        let terminal = settings.string("terminal");
+        let terminal: String = get_terminal().into();
         println!("{}", terminal);
 
         let terminal_selection = terminal_selection_model
@@ -109,8 +112,11 @@ impl SimpleComponent for SettingsDialog {
         match msg {
             SettingsMsg::OpenSettings => {}
             SettingsMsg::TerminalSelectionChanged(terminal) => {
-                let settings = gio::Settings::new(APP_ID);
-                settings.set_string("terminal", &terminal);
+                let terminal_type: Result<TerminalType, ()> = terminal.as_str().try_into();
+                match terminal_type {
+                    Ok(t) => set_terminal(t),
+                    _ => println!("Found unknown terminal string: {}", terminal),
+                }
             }
         }
     }
